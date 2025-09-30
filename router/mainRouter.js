@@ -5,14 +5,14 @@ const mainController = require("../controllers/mainController");
 const autenticacao = require("../config/autenticacao");
 
 // Páginas login
-//router.get('/login', loginController.abrelogin);
+router.get('/login', loginController.abrelogin);
 
-//router.get('/cadastrar', loginController.cadastrar);
+router.get('/cadastro', loginController.cadastrar);
 
 //router.get('/forgot', loginController.forgot);
 
 
-router.post('/cadastrar', loginController.cadastro);
+router.post('/cadastro', loginController.cadastro);
 
 router.post('/login', loginController.logar);
 

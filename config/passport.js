@@ -14,7 +14,7 @@ passport.use(
       if (!bcrypt.compareSync(password, usuario.senha)) {
         return cb(null, false, { msg: "Senha incorreta!" });
       } else {
-        return cb(null, usuario, {msg: "Erro ao autenticar!"} ); 
+        return cb(null, usuario, {msg: "oi"}); 
       }
     }
   })

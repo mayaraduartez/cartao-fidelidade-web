@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": "postgres",
-    "database": "db_cartaofidelidade",
+    "database": "db_cartaofidelidade-2",
     "host": "localhost",
     "port": "5433",
     "dialect": "postgres",

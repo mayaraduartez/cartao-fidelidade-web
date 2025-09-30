@@ -23,7 +23,7 @@ async function cadastro(req, res) {
 
     res.redirect("/login");
   } catch (error) {
-    res.render("principal/cadastrar.ejs", {
+    res.render("cadastrar.ejs", {
       msg: "Esse e-mail já possui cadastro!",
     });
   }
@@ -145,9 +145,19 @@ const logar = passport.authenticate("local", {
     successRedirect: "/principaladm",
   });
 
+async function abrelogin(req, res) {
+    res.render("login/login.ejs");
+}
+
+async function cadastrar(req, res) {
+  res.render("login/cadastrar.ejs");
+}
+
 module.exports = {
   cadastro,
   recuperar,
   atualizarsenha,
   logar,
+  abrelogin,
+  cadastrar
 };
