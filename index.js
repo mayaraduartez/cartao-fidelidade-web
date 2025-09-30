@@ -20,11 +20,9 @@ const Token = require("./models/Token");
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);
 
-Usuario.belongsTo(Unid_Restaurante);
-Unid_Restaurante.hasMany(Usuario);
 
-Usuario.belongsTo(Grupo);
-Grupo.hasMany(Usuario);
+
+
 
 Grupo.belongsToMany(Permissao, { through: 'grupos_permissao' });
 Permissao.belongsToMany(Grupo, { through: 'grupos_permissao' });
@@ -41,9 +39,10 @@ Restaurante.hasMany(Unid_Restaurante);
 Cartao_cliente.belongsTo(Promocao);
 Promocao.hasMany(Cartao_cliente);
 
+app.use(express.json());
 
 //configuração dos arquivos de visão (VIEWS)
-//app.set("view engine", "ejs");
+app.set("view engine", "ejs");
 
 //configurar para receber dados por metodo post
 app.use(express.urlencoded({ extended: false }));
