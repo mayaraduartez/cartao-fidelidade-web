@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de vendas</title>
+    <link rel="stylesheet" href="/style/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header>Análise de vendas</header>
+
+    <div class="filtro">
+        <label for="periodo">Período:</label>
+        <select id="periodo">
+            <option value="hoje">Hoje</option>
+            <option value="semana">Semana</option>
+            <option value="mes">Mês</option>
+        </select>
+        <button onclick="atualizarDashboard()">Aplicar</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="card">
+            <h3>Vendas no Período</h3>
+            <h2 id="vendas">0</h2>
+            <p>Quantidade de refeições vendidas</p>
+        </div>
+        <div class="card">
+            <h3>Refeições Grátis Previsão</h3>
+            <h2 id="gratis">0</h2>
+            <p>Baseado em 1 grátis a cada 10</p>
+        </div>
+    </div>
+
+    <!-- aqui fica o grafico -->
+    <div class="grafico">
+        <canvas id="graficoVendas"></canvas>
+    </div>
+
+</body>
+<script src="/js/criar-grafico.js"></script>
+</html>
