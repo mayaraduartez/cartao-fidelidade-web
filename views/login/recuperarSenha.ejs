@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar Senha</title>
+
+  <!-- Bootstrap 4.1.3 -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+    crossorigin="anonymous"></script>
+
+  <!-- Seu CSS -->
+  <link rel="stylesheet" href="/style/style2.css">
+</head>
+
+<body class="fundo-amarelo">
+  <div class="container mt-5">
+    <div class="row justify-content-center align-items-center">
+      <!-- Logo à esquerda -->
+      <div class="col-md-4 text-left mb-4 mb-md-0">
+<img src="../img/logoRes.png" alt="Logo Sabor Caseiro" class="img-fluid" style="max-width: 250px;">
+      </div>
+
+      <!-- Formulário à direita -->
+      <div class="col-md-6">
+        <h1 class="h4 mb-4 text-center">Recupere a sua senha</h1>
+
+        <form enctype="multipart/form-data" method="post">
+          <div class="form-group text-left">
+            <label for="exampleInputEmail1">Escreva o seu email</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <small id="emailHelp" class="form-text text-muted"></small>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block">Enviar token</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelector('.btn.btn-primary').addEventListener('click', function () {
+      const email = document.getElementById('exampleInputEmail1').value.trim();
+
+      if (email) {
+        alert(`Token enviado para: ${email}`);
+        // Aqui você pode adicionar lógica para enviar o token via backend futuramente
+      } else {
+        alert('Por favor, preencha o campo de email.');
+      }
+    });
+  </script>
+</body>
+
+</html>
