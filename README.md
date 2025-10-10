@@ -41,14 +41,22 @@ O sistema utiliza renderização **EJS no lado do servidor**, garantindo maior d
 
 ## Estrutura do Projeto
 
-├── config/ # Configurações da aplicação e banco
+├── config/ # Configurações da aplicação e banco 
+
 ├── controllers/ # Camada de controle (regras de negócio)
+
 ├── migrations/ # Scripts de migração do banco
+
 ├── models/ # Modelos de dados (entidades)
+
 ├── public/ # Arquivos estáticos (CSS, JS, imagens)
+
 ├── router/ # Definição de rotas (Express)
+
 ├── views/ # Templates EJS (layouts e páginas)
+
 ├── index.js # Ponto de entrada principal
+
 └── package.json
 
 
