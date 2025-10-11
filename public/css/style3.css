@@ -143,7 +143,7 @@ html, body {
   background-color: #666;
 }
 
-/*ESTILO DA TABELA*/
+/*ESTILO SUAVE E ARREDONDADO DA TABELA */
 
 .table {
   font-family: 'Poppins-Regular';
@@ -157,9 +157,8 @@ html, body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Cabeçalho da tabela com cor sólida */
 .table thead th {
-  background-color: #f94904; 
+  background-color: #f94904;
   color: #fff;
   text-align: center;
   padding: 12px 10px;
@@ -167,7 +166,6 @@ html, body {
   border: none;
 }
 
-/* Bordas arredondadas no topo */
 .table thead th:first-child {
   border-top-left-radius: 12px;
 }
@@ -175,7 +173,6 @@ html, body {
   border-top-right-radius: 12px;
 }
 
-/* Células do corpo */
 .table td {
   padding: 12px 10px;
   border-bottom: 1px solid #f0d9b5;
@@ -184,14 +181,12 @@ html, body {
   text-align: center;
 }
 
-/* Nome, Função e Email alinhados à esquerda */
 .table td:nth-child(2),
 .table td:nth-child(3),
 .table td:nth-child(7) {
   text-align: left;
 }
 
-/* Última linha arredondada */
 .table tbody tr:last-child td:first-child {
   border-bottom-left-radius: 12px;
 }
@@ -199,57 +194,62 @@ html, body {
   border-bottom-right-radius: 12px;
 }
 
-/* Larguras proporcionais */
-.table th:nth-child(1), .table td:nth-child(1) { width: 6%; }   
-.table th:nth-child(2), .table td:nth-child(2) { width: 18%; }  
-.table th:nth-child(3), .table td:nth-child(3) { width: 12%; }  
-.table th:nth-child(4), .table td:nth-child(4) { width: 12%; }  
-.table th:nth-child(5), .table td:nth-child(5) { width: 13%; }  
-.table th:nth-child(6), .table td:nth-child(6) { width: 13%; }  
-.table th:nth-child(7), .table td:nth-child(7) { width: 18%; }  
-.table th:nth-child(8), .table td:nth-child(8) { width: 8%; }   
+.table th:nth-child(1), .table td:nth-child(1) { width: 6%; }
+.table th:nth-child(2), .table td:nth-child(2) { width: 18%; }
+.table th:nth-child(3), .table td:nth-child(3) { width: 12%; }
+.table th:nth-child(4), .table td:nth-child(4) { width: 12%; }
+.table th:nth-child(5), .table td:nth-child(5) { width: 13%; }
+.table th:nth-child(6), .table td:nth-child(6) { width: 13%; }
+.table th:nth-child(7), .table td:nth-child(7) { width: 18%; }
+.table th:nth-child(8), .table td:nth-child(8) { width: 8%; }
 
-/* Efeito hover suave */
 .table tbody tr:hover {
   background-color: #ffecc7;
   transition: background 0.2s ease-in-out;
 }
 
-/*Sucesso*/
-/* Div de sucesso centralizada */
+/* Tela de sucesso centralizada */
+.tela-sucesso {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(-135deg, #ffe016, #f94904);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Div de sucesso */
 .box-sucesso {
-  background-color: #fff; 
-  border: 1px solid rgba(0, 0, 0, 0.2); 
-  border-radius: 12px;
+  background-color: #fff;
+  border-radius: 15px;
   padding: 40px 30px;
   width: 100%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Título centralizado */
 .box-sucesso h2 {
   font-family: 'Poppins-Bold', sans-serif;
   font-size: 24px;
-  color: #f94904; 
+  color: #f94904;
+  margin: 0;
 }
 
-/* Texto do sucesso */
 .box-sucesso p {
   font-family: 'Poppins-Regular', sans-serif;
   font-size: 16px;
   color: #333;
 }
 
-/* Botão voltar */
 .btn-voltar {
   display: inline-block;
   padding: 12px 25px;
-  background-color: #999; 
+  background-color: #f94904;
   color: #fff;
   text-decoration: none;
   border-radius: 25px;
@@ -259,31 +259,5 @@ html, body {
 }
 
 .btn-voltar:hover {
-  background-color: #666;
+  background-color: #333;
 }
-
-.tela-sucesso {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; 
-  background: linear-gradient(-135deg, #ffe016, #f94904);
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.box-sucesso {
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 12px;
-  padding: 50px 40px;
-  width: 100%;
-  max-width: 600px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-
