@@ -460,3 +460,25 @@ iframe {
     opacity: 1;
   }
 }
+
+
+.btn-voltar1 {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 12px 25px;
+  background-color: #f94904; 
+  color: #fff !important; 
+  text-decoration: none;
+  border-radius: 25px;
+  font-family: 'Montserrat-Bold', sans-serif;
+  font-size: 14px;
+  text-align: center;
+  transition: background 0.3s ease, transform 0.2s ease;
+  float: right; 
+}
+
+.btn-voltar1:hover {
+  background-color: #333; 
+  color: #fff !important;
+  transform: translateY(-2px);
+}

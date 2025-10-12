@@ -34,8 +34,6 @@ router.get("/admin/listarFuncionarios", funcionarioController.listarFuncionarios
 
 //filtro para buscar pelo nome ou id
 router.get("/admin/funcionarios/buscar", funcionarioController.buscarFuncionario);
-router.get("/admin/funcionarios",funcionarioController.listarFuncionarios);
-
 router.get("/admin/cadastroSucesso", (req, res) => {
   res.render("admin/cadastroSucesso");
 });
