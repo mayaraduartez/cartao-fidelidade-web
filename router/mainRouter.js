@@ -24,7 +24,7 @@ router.post('/token' , loginController.atualizarsenha);
 
 // Rota para abrir a tela de cadastro de funcionário
 router.get("/admin/Cadastrarfuncionarios", (req, res) => {
-  res.render("admin/cadastrarFuncionario"); 
+  res.render("admin/cadastrarFuncionario",{msg:null}); 
 }); 
 // Rota para cadastrar funcionário 
 router.post("/funcionarios", funcionarioController.cadastrarFuncionario);

@@ -24,6 +24,13 @@
         </div>
 
         <form class="login100-form validate-form" method="post" action="/funcionarios">
+            <!-- Mensagem de erro -->
+            <% if (msg) { %>
+              <div id="msg-erro" style="padding: 10px; margin-bottom: 15px; border: 1px solid red; background-color: #f8d7da; color: #721c24; border-radius: 5px;">
+                <%= msg %>
+              </div>
+            <% } %>
+          <!-- Div para mensagens de erro -->
           <span class="login100-form-title">
             Cadastro de Funcionário
           </span>
@@ -99,7 +106,7 @@
           </div>
 
           <div class="text-center p-t-12">
-            <a class="btn-voltar1" href="/admin/dashboard">
+            <a class="btn-voltar1" href="/admmeuperfil">
               Voltar
             </a>
           </div>
