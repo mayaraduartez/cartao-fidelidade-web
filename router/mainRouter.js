@@ -38,5 +38,11 @@ router.get("/admin/cadastroSucesso", (req, res) => {
   res.render("admin/cadastroSucesso");
 });
 
+// Rotas de perfil
+router.get('/meuPerfil', mainController.MeuPerfil);
+router.post('/atualizarPerfil', mainController.atualizarPerfil);
+
+// Rota administrativa
+router.get('/admmeuperfil',  mainController.AdmPerfil); // se quiser reaproveitar
 
 module.exports = router;
