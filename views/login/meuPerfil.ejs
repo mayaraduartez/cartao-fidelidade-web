@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -26,6 +27,99 @@
 <body class="fundo-amarelo">
   <div class="container mt-4">
     <h1 class="mb-4">Meu perfil</h1>
+
+    <form action="atualizarPerfil" method="post" >
+  <!-- IMPORTANTE:
+       O enctype="multipart/form-data" é necessário quando há envio de arquivos (ex: fotos),
+       mas ele muda o formato dos dados enviados.
+       
+       Se você ainda **não vai processar fotos no backend**, pode remover esse atributo
+       temporariamente para evitar problemas com req.body.
+       
+       Ou seja, substitua por:
+       <form action="atualizarPerfil" method="post">
+       
+       Assim o Express conseguirá ler os dados com express.urlencoded().
+  -->
+
+  <div class="row">
+    <!-- Coluna da foto + QR Code -->
+    <div class="col-md-4 text-center mb-4">
+      <!-- Foto de perfil -->
+      <div class="text-left pl-3">
+        <img id="previewFoto" src="/img/default.png" alt="Foto de perfil"
+          style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"
+          class="mb-2">
+      </div>
+
+      <!-- Campo de upload de imagem -->
+      <!-- Mesmo não sendo processado ainda, o campo está aqui.
+           Sem backend para lidar com arquivos, este campo será ignorado -->
+      <input type="file" id="foto" name="foto" accept="image/*" class="form-control-file mb-3">
+
+      <!-- QR Code -->
+      <label>Meu QRcode:</label><br>
+      <img src="/img/images.png" alt="QR Code" style="width: 100px;">
+    </div>
+
+    <!-- Coluna das informações -->
+    <div class="col-md-8">
+      <div class="form-group">
+        <label>Nome:</label>
+        <input type="text" name="nome" class="form-control" placeholder="Nome">
+        <!-- Certifique-se de que o name está correto: "nome" -->
+      </div>
+      <div class="form-group">
+        <label>CPF:</label>
+        <input type="text" name="cpf" class="form-control" placeholder="CPF">
+      </div>
+      <div class="form-group">
+        <label>Telefone:</label>
+        <input type="tel" name="telefone" class="form-control" placeholder="Telefone">
+      </div>
+      <div class="form-group">
+        <label>Endereço:</label>
+        <input type="text" name="endereco" class="form-control" placeholder="Endereço">
+      </div>
+
+      <!-- Botões -->
+      <div class="mt-4 d-flex flex-wrap gap-2">
+        <a href="recuperarSenha.html" class="btn btn-warning mr-2 mb-2">Trocar senha</a>
+        <button type="submit" class="btn btn-primary mr-2 mb-2">Atualizar Perfil</button>
+        <button type="button" class="btn btn-success mb-2" onclick="renovarCartao()">Renovar cartão</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Histórico -->
+  <h2 class="mt-5">Histórico de Refeições</h2>
+  <table class="table table-bordered text-center historico-refeicoes">
+    <thead class="thead-dark">
+      <tr>
+        <th>Data</th>
+        <th>Refeição</th>
+        <th>Valor (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>15/08/2025</td>
+        <td>Almoço livre</td>
+        <td>25,00</td>
+      </tr>
+      <tr>
+        <td>17/08/2025</td>
+        <td>Almoço Peso</td>
+        <td>35,00</td>
+      </tr>
+      <tr>
+        <td>19/08/2025</td>
+        <td>Almoço livre</td>
+        <td>15,00</td>
+      </tr>
+    </tbody>
+  </table>
+</form>
 
     <form enctype="multipart/form-data" method="post">
       <div class="row">
@@ -78,7 +172,7 @@
 <table class="table table-bordered text-center historico-refeicoes">
   <thead class="thead-dark">
           <tr>
-            <th>Data</th>
+            <th>Data</th> 
             <th>Refeição</th>
             <th>Valor (R$)</th>
           </tr>
