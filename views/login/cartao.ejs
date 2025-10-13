@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartão de Fidelidade Digital</title>
+     <link rel="stylesheet" href="/style/styleCartão.css">
+</head>
+<body>
+
+<div class="card">
+    <svg class="decorative-flower top-left" viewBox="0 0 100 100">
+        <path d="M50,0c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C70.7,9.3,61.4,0,50,0z M14.3,29.3c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C35,38.6,25.7,29.3,14.3,29.3z M85.7,29.3c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C106.3,38.6,97,29.3,85.7,29.3z M50,100c11.4,0,20.7-9.3,20.7-20.7c0-11.3-16.5-23.1-20.7-40.1c-4.2,17-20.7,28.8-20.7,40.1C29.3,90.7,38.6,100,50,100z"/>
+    </svg>
+
+    <div> 
+        <h1>Cartão de Fidelidade Digital</h1>
+    </div>
+
+    <div class="card-header">
+        <h2>
+            Ao realizar 10 refeições, ganhe um almoço grátis.
+        </h2>
+    </div>
+
+    <div class="punch-grid" id="punch-grid">
+        </div>
+
+
+    <svg class="decorative-flower bottom-right" viewBox="0 0 100 100">
+        <path d="M50,0c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C70.7,9.3,61.4,0,50,0z M14.3,29.3c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C35,38.6,25.7,29.3,14.3,29.3z M85.7,29.3c-11.4,0-20.7,9.3-20.7,20.7c0,11.3,16.5,23.1,20.7,40.1c4.2-17,20.7-28.8,20.7-40.1C106.3,38.6,97,29.3,85.7,29.3z M50,100c11.4,0,20.7-9.3,20.7-20.7c0-11.3-16.5-23.1-20.7-40.1c-4.2,17-20.7,28.8-20.7,40.1C29.3,90.7,38.6,100,50,100z"/>
+    </svg>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const grid = document.getElementById('punch-grid');
+        const numBoxes = 10;
+
+        // Cria os 10 quadradinhos dinamicamente
+        for (let i = 0; i < numBoxes; i++) {
+            const box = document.createElement('div');
+            box.classList.add('punch-box');
+            const checkEmoji = document.createElement('span');
+            checkEmoji.classList.add('check-emoji');
+            checkEmoji.textContent = "✅";
+            box.appendChild(checkEmoji);
+            grid.appendChild(box);
+        }
+
+        const boxes = document.querySelectorAll('.punch-box');
+        
+        // Adiciona um evento de clique a cada quadradinho
+        boxes.forEach(box => {
+            box.addEventListener('click', () => {
+                box.classList.toggle('marked');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
