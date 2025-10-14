@@ -3,7 +3,7 @@ const router = express.Router();
 const loginController = require("../controllers/loginController"); 
 const mainController = require("../controllers/mainController"); 
 const autenticacao = require("../config/autenticacao");
-const funcionarioController = require("../controllers/funcionarioController")
+const upload = require("../config/upload");
 
 // Páginas login
 router.get('/login', loginController.abrelogin);
@@ -23,11 +23,12 @@ router.post('/token' , loginController.atualizarsenha);
 
 
 // Rota para abrir a tela de cadastro de funcionário
-router.get("/admin/Cadastrarfuncionarios", (req, res) => {
-  res.render("admin/cadastrarFuncionario"); 
-}); 
+router.get("/admin/Cadastrarfuncionarios", mainController.abreCadastrarFuncionario); 
+
 // Rota para cadastrar funcionário 
-router.post("/funcionarios", funcionarioController.cadastrarFuncionario);
+router.post("/funcionarios", mainController.cadastrarFuncionario);
+
 //rota listar funcionarios
-router.get("/admin/listarFuncionarios", funcionarioController.listarFuncionarios);
+router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
+
 module.exports = router;
