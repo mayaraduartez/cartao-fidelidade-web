@@ -24,10 +24,18 @@ router.post('/token' , loginController.atualizarsenha);
 
 // Rota para abrir a tela de cadastro de funcionário
 router.get("/admin/Cadastrarfuncionarios", (req, res) => {
-  res.render("admin/cadastrarFuncionario"); 
+  res.render("admin/cadastrarFuncionario",{msg:null}); 
 }); 
 // Rota para cadastrar funcionário 
 router.post("/funcionarios", funcionarioController.cadastrarFuncionario);
 //rota listar funcionarios
 router.get("/admin/listarFuncionarios", funcionarioController.listarFuncionarios);
+
+
+//filtro para buscar pelo nome ou id
+router.get("/admin/funcionarios/buscar", funcionarioController.buscarFuncionario);
+router.get("/admin/cadastroSucesso", (req, res) => {
+  res.render("admin/cadastroSucesso");
+});
+
 module.exports = router;
