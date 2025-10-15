@@ -31,4 +31,18 @@ router.post("/funcionarios", mainController.cadastrarFuncionario);
 //rota listar funcionarios
 router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
 
+// Rotas de perfil
+router.get('/meuPerfil', mainController.MeuPerfil);
+router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
+
+// Rota administrativa
+router.get('/admmeuperfil',  mainController.AdmPerfil); // se quiser reaproveitar
+
+//Rota cadastro refeição adm
+router.get('/admincadastrarRefeicao', mainController.cadastrarRefeicao);
+router.post('/refeicoes', mainController.refeicoes);
+
+//rota exibir minhas refeições
+router.get('/minhasRefeicoes', mainController.minhasRefeicoes);
+
 module.exports = router;
