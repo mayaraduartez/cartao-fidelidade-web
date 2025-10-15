@@ -31,4 +31,6 @@ router.post("/funcionarios", mainController.cadastrarFuncionario);
 //rota listar funcionarios
 router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
 
+router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
+
 module.exports = router;
