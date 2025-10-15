@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const Funcionario = require("../models/funcionario");
+const Usuario = require("../models/Usuario");
+const upload = require("../config/upload"); // caminho para o arquivo upload
 const { Op } = require("sequelize");
 
 
@@ -119,3 +121,91 @@ module.exports = {
     buscarFuncionario
 };
 
+
+
+
+// FUNÇÃO: EXIBE PERFIL DO USUÁRIO
+
+async function MeuPerfil(req, res) {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).send("Usuário não autenticado.");
+    }
+
+    //  o método é findByPk (
+    const usuario = await Usuario.findByPk(req.user.id);
+
+    if (!usuario) {
+      return res.status(404).send("Usuário não encontrado.");
+    }
+
+    // Renderiza o EJS com os dados do usuário
+    res.render("login/meuPerfil.ejs", { user: usuario });
+  } catch (error) {
+    console.error("Erro ao carregar perfil:", error);
+    res.status(500).send("Erro ao carregar o perfil do usuário.");
+  }
+}
+
+
+// FUNÇÃO: ATUALIZA PERFIL
+
+async function atualizarPerfil(req, res) {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).send("Usuário não autenticado.");
+    }
+
+    const { nome, cpf, telefone, endereco } = req.body;
+
+    const dadosAtualizacao = { nome, cpf, telefone, endereco };
+
+    // Se uma nova foto foi enviada, atualiza o campo
+    if (req.file) {
+      dadosAtualizacao.foto = req.file.filename;
+    }
+
+    // Atualiza os dados no banco
+    await Usuario.update(dadosAtualizacao, {
+      where: { id: req.user.id }
+    });
+
+    // Redireciona de volta ao perfil
+    res.redirect("/meuPerfil");
+  } catch (error) {
+    console.error("Erro ao atualizar perfil:", error);
+    res.status(500).send("Erro ao atualizar o perfil do usuário.");
+  }
+}
+
+async function cadastrarRefeicao(req, res) {
+  res.render("admin/cadastrarRefeicao"); // ou qualquer lógica que você quiser
+}
+
+async function refeicoes(req, res) {
+  res.send("Refeição cadastrada!");
+}
+
+async function minhasRefeicoes(req, res) {
+  res.render("usuario/minhasRefeicoes"); // ou qualquer lógica que você quiser
+}
+
+
+// FUNÇÃO: PERFIL ADMINISTRATIVO
+
+async function AdmPerfil(req, res) {
+  res.send("Página administrativa do perfil");
+}
+
+
+module.exports = {
+  MeuPerfil,
+  atualizarPerfil,
+  AdmPerfil,
+  cadastrarFuncionario,
+  listarFuncionarios,
+  abreCadastrarFuncionario,
+  cadastrarRefeicao,
+  refeicoes,
+  minhasRefeicoes
+};
