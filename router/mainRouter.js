@@ -44,5 +44,6 @@ router.post('/refeicoes', mainController.refeicoes);
 
 //rota exibir minhas refeições
 router.get('/minhasRefeicoes', mainController.minhasRefeicoes);
+router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
 
 module.exports = router;

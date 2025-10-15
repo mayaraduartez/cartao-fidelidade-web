@@ -3,41 +3,65 @@
 <head>
   <title>Funcionários Cadastrados</title>
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="/css/style3.css">
   <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/style2.css">
+
 </head>
 <body>
-  <div class="container mt-5">
-    <h2 class="mb-4">Funcionários Cadastrados</h2>
+    <div class="tela-funcionarios">
+      <div class="cabecalho-funcionarios">
+    <div class="logo-area">
+      <img src="/images/logoRes.png" alt="Logo">
+    </div>
+      <h1 class="titulo-funcionarios">Funcionários</h1>
+    </div>
 
-    <table class="table table-bordered table-hover">
-      <thead class="thead-dark">
-        <tr>
-          <th>Nome</th>
-          <th>Função</th>
-          <th>CPF</th>
-          <th>Data de Nascimento</th>
-          <th>Telefone</th>
-          <th>Email</th>
-          <th>Administrador</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% funcionarios.forEach(func => { %>
-          <tr>
-            <td><%= func.nome %></td>
-            <td><%= func.funcao %></td>
-            <td><%= func.cpf %></td>
-            <td><%= func.data_nasc %></td>
-            <td><%= func.telefone %></td>
-            <td><%= func.email %></td>
-            <td><%= func.admin ? "Sim" : "Não" %></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+      <div class="box-formulario">
+        <h2>Buscar Funcionários</h2>
+      <form method="get" action="/admin/funcionarios/buscar">
+      <input type="text" name="nome" class="input100" placeholder="Buscar por nome">
+      <input type="number" name="id" class="input100" placeholder="Buscar por ID">
+  
+      <div class="btn-group-form">
+        <button type="submit" class="login100-form-btn">Buscar</button>
+        <button type="button" class="login100-form-btnlimpar-btn" onclick="window.location.href='/admin/listarFuncionarios'">Limpar</button>
 
-    <a href="/dashborad.ejs" class="btn btn-secondary">Voltar</a>
-  </div>
+      </div>
+</form>
+
+      </div>
+
+      <div class="box-tabela">
+        <h2>Funcionários Cadastrados</h2>
+        <table class="table table-striped table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Função</th>
+              <th>CPF</th>
+              <th>Data de Nascimento</th>
+              <th>Telefone</th>
+              <th>Email</th>
+              <th>Administrador</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% funcionarios.forEach(func => { %>
+              <tr>
+                <td><%= func.id %></td>
+                <td><%= func.nome %></td>
+                <td><%= func.funcao %></td>
+                <td><%= func.cpf %></td>
+                <td><%= func.data_nasc %></td>
+                <td><%= func.telefone %></td>
+                <td><%= func.email %></td>
+                <td><%= func.admin ? "Sim" : "Não" %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
 </body>
 </html>
