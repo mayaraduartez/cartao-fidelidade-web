@@ -3,7 +3,7 @@ const sequelizeconnect = require("../config/connection");
 
 const Funcionario = sequelizeconnect.define("Funcionario", {
   nome: DataTypes.STRING,
-  email: { type: DataTypes.STRING, unique: true },
+  email: { type: DataTypes.STRING},
   senha: DataTypes.STRING,
   funcao: DataTypes.STRING,
   cpf: {type: DataTypes.STRING, unique:true},
