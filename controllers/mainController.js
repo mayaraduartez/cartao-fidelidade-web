@@ -114,12 +114,6 @@ async function buscarFuncionario(req, res) {
   }
 }
 
-module.exports = { 
-    cadastrarFuncionario, 
-    listarFuncionarios,
-    abreCadastrarFuncionario,
-    buscarFuncionario
-};
 
 
 
@@ -207,5 +201,6 @@ module.exports = {
   abreCadastrarFuncionario,
   cadastrarRefeicao,
   refeicoes,
-  minhasRefeicoes
+  minhasRefeicoes,
+  buscarFuncionario
 };
