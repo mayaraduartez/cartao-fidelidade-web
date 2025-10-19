@@ -23,13 +23,14 @@ router.post('/token' , loginController.atualizarsenha);
 
 
 // Rota para abrir a tela de cadastro de funcionário
-router.get("/admin/Cadastrarfuncionarios", mainController.abreCadastrarFuncionario); 
+router.get("/Cadastrarfuncionarios", mainController.abreCadastrarFuncionario); 
 
 // Rota para cadastrar funcionário 
 router.post("/funcionarios", mainController.cadastrarFuncionario);
 
 //rota listar funcionarios
-router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
+router.get("/listarFuncionarios", mainController.listarFuncionarios);
+router.get("/buscarFuncionarios", mainController.buscarFuncionario);
 
 // Rotas de perfil
 router.get('/meuPerfil', mainController.MeuPerfil);
