@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista de Clientes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Lista de Clientes</h1>
+
+  <% if (clientes.length === 0) { %>
+    <p>Nenhum cliente cadastrado.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Sobrenome</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>CPF</th>
+          <th>Data de Nascimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% clientes.forEach(cliente => { %>
+          <tr>
+            <td><%= cliente.nome %></td>
+            <td><%= cliente.sobrenome %></td>
+            <td><%= cliente.email %></td>
+            <td><%= cliente.telefone %></td>
+            <td><%= cliente.cpf %></td>
+            <td><%= cliente.data_nascimento %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Unidades - Sabor Caseiro</title>
@@ -35,17 +36,20 @@
         <div class="p-3 h-100">
           <h2 class="h5">Unidades Atuais</h2>
           <ul id="unitList" class="list-group mb-3">
-            <li class="list-group-item">📍 Av. Pres. Vargas, 799 - Getúlio Vargas</li>
-            <li class="list-group-item">📍 Av. Tupi Silveira, 1890 - Centro</li>
-            <li class="list-group-item">📍 R. Venâncio Aíres, 41 - Centro</li>
+            <% restaurantes.forEach(rest=> { %>
+              <li class="list-group-item">📍 <%= rest.endereco %> - <%= rest.nome %>
+              </li>
+              <% }) %>
           </ul>
 
-          <h2 class="h5">Selecionar Unidade</h2>
           <select id="unitSelect" class="custom-select mb-3">
-            <option value="0">Av. Pres. Vargas, 799 - Getúlio Vargas</option>
-            <option value="1">Av. Tupi Silveira, 1890 - Centro</option>
-            <option value="2">R. Venâncio Aíres, 41 - Centro</option>
+            <% restaurantes.forEach((rest, index)=> { %>
+              <option value="<%= index %>">
+                <%= rest.endereco %> - <%= rest.nome %>
+              </option>
+              <% }) %>
           </select>
+
 
           <div class="d-flex">
             <button class="btn btn-warning w-50 mr-2" disabled>Editar</button>
@@ -59,8 +63,8 @@
         <div class="p-3 h-100">
           <h2 class="h5">Cadastrar Nova Unidade</h2>
 
-          <!-- Formulário atualizado para Express -->
-          <form action="/admin/cadastrarRestaurante" method="POST">
+          <form action="/restaurantes" method="POST">
+
             <div class="form-group">
               <label for="nome">Nome da Unidade:</label>
               <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Unidade Leste" required>
@@ -68,16 +72,18 @@
 
             <div class="form-group">
               <label for="endereco">Endereço:</label>
-              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999" required>
+              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999"
+                required>
             </div>
 
             <button type="submit" class="btn btn-success btn-block">Cadastrar Unidade</button>
-          </form>
+            <a href="/admin/listarClientes">Ver lista de clientes</a>
 
-          <a href="/admin/listarRestaurantes" class="btn btn-secondary btn-block mt-3">Ver Restaurantes</a>
+          </form>
         </div>
       </div>
     </div>
   </div>
 </body>
+
 </html>

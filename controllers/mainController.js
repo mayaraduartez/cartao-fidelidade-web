@@ -32,6 +32,52 @@ function validarCPF(cpf) {
 // 👨‍💼 FUNCIONÁRIOS
 // -----------------------------
 
+async function cadastrarCliente(req, res) {
+  const { nome, sobrenome, email, telefone, cpf, data_nascimento, senha } = req.body;
+
+  if (!nome || !sobrenome || !email || !telefone || !cpf || !data_nascimento || !senha) {
+    return res.render("login/cadastrar", {
+      msg: "Preencha todos os campos obrigatórios!",
+      msgType: "error"
+    });
+  }
+
+  try {
+    const clienteExistente = await Usuario.findOne({
+      where: {
+        [Op.or]: [{ cpf }, { email }]
+      }
+    });
+
+    if (clienteExistente) {
+      return res.render("login/cadastrar", {
+        msg: "CPF ou e-mail já cadastrados!",
+        msgType: "warning"
+      });
+    }
+
+    const hash = await bcrypt.hash(senha, 10);
+
+    await Usuario.create({
+      nome,
+      sobrenome,
+      email,
+      telefone,
+      cpf,
+      data_nascimento,
+      senha: hash
+    });
+
+    res.render("login/cadastrar", {
+      msg: "Cliente cadastrado com sucesso!",
+      msgType: "success"
+    });
+  } catch (error) {
+    console.error("Erro ao cadastrar cliente:", error);
+    res.status(500).send("Erro ao cadastrar cliente.");
+  }
+}
+
 async function cadastrarFuncionario(req, res) {
   const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
 
@@ -90,9 +136,17 @@ async function listarFuncionarios(req, res) {
   }
 }
 
-async function abreCadastrarFuncionario(req, res) {
-  res.render("admin/cadastrarFuncionario");
+async function abreCadastrarRestaurante(req, res) {
+  try {
+    const restaurantes = await Restaurante.findAll();
+    res.render("login/telaRestaurante", { restaurantes });
+  } catch (error) {
+    console.error("Erro ao abrir tela de restaurante:", error);
+    res.status(500).send("Erro ao carregar a tela de restaurante.");
+  }
 }
+
+
 
 async function buscarFuncionario(req, res) {
   const { nome, id } = req.query;
@@ -117,10 +171,6 @@ async function buscarFuncionario(req, res) {
 // 🍽️ RESTAURANTES
 // -----------------------------
 
-async function abreCadastrarRestaurante(req, res) {
-  res.render("login/telaRestaurante");
-}
-
 async function cadastrarRestaurante(req, res) {
   try {
     const { nome, endereco } = req.body;
@@ -129,7 +179,8 @@ async function cadastrarRestaurante(req, res) {
     }
 
     await Restaurante.create({ nome, endereco });
-    res.redirect("/login/listarRestaurantes");
+    res.redirect("/login/telaRestaurante");
+
   } catch (error) {
     console.error("Erro ao cadastrar restaurante:", error);
     res.status(500).send("Erro ao cadastrar restaurante");
@@ -139,7 +190,7 @@ async function cadastrarRestaurante(req, res) {
 async function listarRestaurantes(req, res) {
   try {
     const restaurantes = await Restaurante.findAll();
-    res.json(restaurantes); // ou res.render("admin/listarRestaurantes", { restaurantes });
+    res.render("login/telaRestaurante", { restaurantes });
   } catch (error) {
     console.error("Erro ao listar restaurantes:", error);
     res.status(500).send("Erro ao listar restaurantes");
@@ -158,7 +209,7 @@ async function editarRestaurante(req, res) {
     restaurante.endereco = endereco;
     await restaurante.save();
 
-    res.redirect("/login/listarRestaurantes");
+    res.redirect("/login/telaRestaurante"); // ✅ corrigido
   } catch (error) {
     console.error("Erro ao editar restaurante:", error);
     res.status(500).send("Erro ao editar restaurante");
@@ -172,12 +223,13 @@ async function excluirRestaurante(req, res) {
     if (!restaurante) return res.status(404).send("Restaurante não encontrado");
 
     await restaurante.destroy();
-    res.redirect("/login/listarRestaurantes");
+    res.redirect("/login/telaRestaurante"); // ✅ corrigido
   } catch (error) {
     console.error("Erro ao excluir restaurante:", error);
     res.status(500).send("Erro ao excluir restaurante");
   }
 }
+
 
 // -----------------------------
 // 👤 PERFIL DE USUÁRIO
@@ -222,6 +274,17 @@ async function atualizarPerfil(req, res) {
   }
 }
 
+async function listarClientes(req, res) {
+  try {
+    const clientes = await Usuario.findAll();
+    res.render("admin/listarClientes", { clientes });
+  } catch (error) {
+    console.error("Erro ao listar clientes:", error);
+    res.status(500).send("Erro ao carregar lista de clientes.");
+  }
+}
+
+
 // -----------------------------
 // ⚙️ OUTRAS FUNÇÕES
 // -----------------------------
@@ -242,6 +305,10 @@ async function AdmPerfil(req, res) {
   res.send("Página administrativa do perfil");
 }
 
+
+console.log("Função cadastrarCliente carregada:", typeof cadastrarCliente);
+
+
 // -----------------------------
 // 🚀 EXPORTA TUDO
 // -----------------------------
@@ -250,11 +317,10 @@ module.exports = {
   // funcionários
   cadastrarFuncionario,
   listarFuncionarios,
-  abreCadastrarFuncionario,
   buscarFuncionario,
 
   // restaurantes
-  abreCadastrarRestaurante,
+  //abreCadastrarRestaurante,
   cadastrarRestaurante,
   listarRestaurantes,
   editarRestaurante,
@@ -266,5 +332,7 @@ module.exports = {
   AdmPerfil,
   cadastrarRefeicao,
   refeicoes,
-  minhasRefeicoes
+  minhasRefeicoes,
+  listarClientes,
+  cadastrarCliente
 };

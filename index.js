@@ -5,7 +5,7 @@ const port = process.env.PORT || 3000;
 var session = require("express-session");
 var passport = require("passport"); 
 
-const mainRouter = require("./router/mainRouter");
+const mainRouter = require("./router/mainRouters");
 
 const Usuario = require("./models/Usuario");
 const Cartao_cliente = require("./models/Cartao_cliente");
