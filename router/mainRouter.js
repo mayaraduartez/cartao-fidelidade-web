@@ -4,6 +4,16 @@ const loginController = require("../controllers/loginController");
 const mainController = require("../controllers/mainController"); 
 const autenticacao = require("../config/autenticacao");
 const upload = require("../config/upload");
+const restauranteController = require("../controllers/mainController");
+
+
+router.get('/login/telaRestaurante', mainController.abreCadastrarRestaurante);
+router.post("/restaurantes", mainController.cadastrarRestaurante);
+router.get("/login/listarRestaurantes", mainController.listarRestaurantes);
+router.post("/restaurantes/:id/editar", mainController.editarRestaurante);
+router.post("/restaurantes/:id/excluir", mainController.excluirRestaurante);
+
+
 
 // Páginas login
 router.get('/login', loginController.abrelogin);

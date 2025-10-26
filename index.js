@@ -62,6 +62,20 @@ app.use(passport.authenticate("session"));
 
 app.use("/", mainRouter);
 
+const sequelizeconnect = require("./config/connection");
+
+sequelizeconnect.sync()
+  .then(() => {
+    console.log("Modelos sincronizados com o banco!");
+    app.listen(port, function () {
+      console.log("Servidor funcionando na porta: " + port);
+    });
+  })
+  .catch((err) => {
+    console.error("Erro ao sincronizar modelos:", err);
+  });
+
+
 app.listen(port, function () {
   console.log("Servidor funcionando na porta: " + port);
 });

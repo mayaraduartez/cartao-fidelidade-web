@@ -6,7 +6,12 @@ const Restaurante = sequelizeconnect.define(
   {
     nome: {
       type: DataTypes.STRING,
+      allowNull: false
     },
+    endereco: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   },
   {
     timestamps: false,

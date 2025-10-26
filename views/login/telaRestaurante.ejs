@@ -48,10 +48,9 @@
           </select>
 
           <div class="d-flex">
-  <button class="btn btn-warning w-50 mr-2" onclick="editarUnidade()">Editar</button>
-  <button class="btn btn-danger w-50" onclick="excluirUnidade()">Excluir</button>
-</div>
-
+            <button class="btn btn-warning w-50 mr-2" disabled>Editar</button>
+            <button class="btn btn-danger w-50" disabled>Excluir</button>
+          </div>
         </div>
       </div>
 
@@ -59,78 +58,26 @@
       <div class="col-md-6 mb-4">
         <div class="p-3 h-100">
           <h2 class="h5">Cadastrar Nova Unidade</h2>
-          <form onsubmit="cadastrarUnidade(event)">
+
+          <!-- Formulário atualizado para Express -->
+          <form action="/admin/cadastrarRestaurante" method="POST">
             <div class="form-group">
               <label for="nome">Nome da Unidade:</label>
-              <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Unidade Leste">
+              <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Unidade Leste" required>
             </div>
 
             <div class="form-group">
               <label for="endereco">Endereço:</label>
-              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999">
+              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999" required>
             </div>
 
             <button type="submit" class="btn btn-success btn-block">Cadastrar Unidade</button>
           </form>
+
+          <a href="/admin/listarRestaurantes" class="btn btn-secondary btn-block mt-3">Ver Restaurantes</a>
         </div>
       </div>
     </div>
   </div>
-
-  <script>
-    function atualizarSelect() {
-      const lista = document.getElementById("unitList");
-      const select = document.getElementById("unitSelect");
-      select.innerHTML = "";
-      Array.from(lista.children).forEach((li, index) => {
-        const texto = li.textContent.replace("📍 ", "");
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = texto;
-        select.appendChild(option);
-      });
-    }
-
-    function editarUnidade() {
-      const select = document.getElementById("unitSelect");
-      const index = select.value;
-      const lista = document.getElementById("unitList");
-      const item = lista.children[index];
-      const novoEndereco = prompt("Novo endereço:", item.textContent.replace("📍 ", ""));
-      if (novoEndereco) {
-        item.textContent = "📍 " + novoEndereco;
-        atualizarSelect();
-      }
-    }
-
-    function excluirUnidade() {
-      const select = document.getElementById("unitSelect");
-      const index = select.value;
-      const lista = document.getElementById("unitList");
-      const item = lista.children[index];
-      if (item) {
-        item.remove();
-        atualizarSelect();
-      }
-    }
-
-    function cadastrarUnidade(event) {
-      event.preventDefault();
-      const nome = document.getElementById("nome").value.trim();
-      const endereco = document.getElementById("endereco").value.trim();
-      if (nome && endereco) {
-        const lista = document.getElementById("unitList");
-        const li = document.createElement("li");
-        li.className = "list-group-item";
-        li.textContent = "📍 " + endereco;
-        lista.appendChild(li);
-        atualizarSelect();
-        document.getElementById("nome").value = "";
-        document.getElementById("endereco").value = "";
-      } else {
-        alert("Preencha todos os campos!");
-      }
-    }
-  </script>
 </body>
 </html>
