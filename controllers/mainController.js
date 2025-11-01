@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const Funcionario = require("../models/funcionario");
 const Usuario = require("../models/Usuario");
+const Refeicao = require("../models/refeicoes");
 const upload = require("../config/upload"); // caminho para o arquivo upload
+const Sequelize = require('sequelize');
 
 async function cadastrarFuncionario(req, res) {
   const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
@@ -125,30 +127,77 @@ async function atualizarPerfil(req, res) {
   }
 }
 
+
+
 async function cadastrarRefeicao(req, res) {
-  res.render("admin/cadastrarRefeicao"); 
+  res.render("login/principal"); 
+}
+async function refeicoes(req, res) {
+  try {
+    // Corrige os nomes conforme o formulário principal.ejs
+    const { cpf_email, valor_comanda } = req.body;
+
+    if (!cpf_email || !valor_comanda) {
+      return res.status(400).send("Campos obrigatórios não preenchidos!");
+    }
+
+    // Detecta se o campo é um e-mail
+    const isEmail = cpf_email.includes("@");
+
+    // Salva no banco via Sequelize
+    await Refeicao.create({
+      cpf: isEmail ? null : cpf_email,
+      email: isEmail ? cpf_email : null,
+      valor_comanda: valor_comanda,
+    });
+
+
+    
+    // Redireciona para a página "minhasRefeicoes (meuCartao)"
+    res.redirect(`/minhasRefeicoes?user=${encodeURIComponent(cpf_email)}`);
+
+  } catch (error) {
+    console.error("Erro ao salvar refeição:", error);
+    res.status(500).send("Erro ao registrar refeição");
+  }
 }
 
-async function refeicoes(req, res) {
-  res.send("Refeição cadastrada!");
-}
 
 async function minhasRefeicoes(req, res) {
-  res.render("usuario/minhasRefeicoes"); 
+  try {
+    const username = req.query.user;
+
+    // CORREÇÃO: Use o modelo Refeicao do Sequelize
+    const refeicoes = await Refeicao.findAll({
+      where: {
+        [Sequelize.Op.or]: [
+          { cpf: username },
+          { email: username }
+        ]
+      },
+      order: [['created_at', 'DESC']]
+    });
+
+    res.render("login/meuCartao", { 
+      username, 
+      refeicoes 
+    });
+  } catch (error) {
+    console.error("Erro ao buscar refeições:", error);
+    res.status(500).send("Erro ao carregar suas refeições");
+  }
 }
 
 
-// FUNÇÃO: PERFIL ADMINISTRATIVO essa remover
 
-async function AdmPerfil(req, res) {
-  res.send("Página administrativa do perfil");
-}
+
+
+
 
 
 module.exports = {
   MeuPerfil,
   atualizarPerfil,
-  AdmPerfil,
   cadastrarFuncionario,
   listarFuncionarios,
   abreCadastrarFuncionario,

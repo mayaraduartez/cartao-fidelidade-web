@@ -15,19 +15,14 @@
   <div class="cartao-container">
     <h1>Meu cartão</h1>
     <h2>Junte 10 refeições e receba um almoço gratuito.</h2>
-
     <div class="punch-grid">
-      <div class="punch-box">✅</div>
-      <div class="punch-box">✅</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
+  <% for (let i = 0; i < 10; i++) { %>
+    <div class="punch-box <%= i < refeicoes.length ? '' : 'blank' %>">
+      <%= i < refeicoes.length ? '✅' : '⬜' %>
     </div>
+  <% } %>
+</div>
+
   </div>
 
   <!-- Bootstrap JS (opcional) -->
