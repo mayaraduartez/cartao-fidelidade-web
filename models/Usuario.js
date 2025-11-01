@@ -23,6 +23,11 @@ const Usuario = sequelizeconnect.define(
     telefone: {
         type: DataTypes.STRING,
     },
+    endereco: {
+  type: DataTypes.STRING,
+  allowNull: true,
+},
+
     email: {
       type: DataTypes.STRING,
       allowNull: false,

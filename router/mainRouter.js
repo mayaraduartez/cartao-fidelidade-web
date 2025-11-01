@@ -36,7 +36,7 @@ router.get('/meuPerfil', mainController.MeuPerfil);
 router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
 
 // Rota administrativa
-router.get('/admmeuperfil',  mainController.AdmPerfil); // se quiser reaproveitar
+router.get('/admmeuperfil',  mainController.AdmPerfil); 
 
 //Rota cadastro refeição adm
 router.get('/admincadastrarRefeicao', mainController.cadastrarRefeicao);

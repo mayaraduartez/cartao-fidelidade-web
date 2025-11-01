@@ -56,31 +56,22 @@ async function listarFuncionarios(req, res) {
 async function abreCadastrarFuncionario(req, res) {
     res.render("admin/cadastrarFuncionario");
 }
-module.exports = { 
-    cadastrarFuncionario, 
-    listarFuncionarios,
-    abreCadastrarFuncionario
-};
-
-
-
 
 // FUNÇÃO: EXIBE PERFIL DO USUÁRIO
-
 async function MeuPerfil(req, res) {
   try {
     if (!req.user || !req.user.id) {
       return res.status(401).send("Usuário não autenticado.");
     }
 
-    //  o método é findByPk (
+    // Busca o usuário no banco
     const usuario = await Usuario.findByPk(req.user.id);
 
     if (!usuario) {
       return res.status(404).send("Usuário não encontrado.");
     }
 
-    // Renderiza o EJS com os dados do usuário
+    // Renderiza o EJS passando os dados do usuário
     res.render("login/meuPerfil.ejs", { user: usuario });
   } catch (error) {
     console.error("Erro ao carregar perfil:", error);
@@ -89,19 +80,34 @@ async function MeuPerfil(req, res) {
 }
 
 
-// FUNÇÃO: ATUALIZA PERFIL
 
+// FUNÇÃO: ATUALIZA PERFIL
 async function atualizarPerfil(req, res) {
   try {
     if (!req.user || !req.user.id) {
       return res.status(401).send("Usuário não autenticado.");
     }
 
-    const { nome, cpf, telefone, endereco } = req.body;
+    // Captura os dados do formulário
+    const { nome, cpf, telefone, endereco, data_nascimento, cargo } = req.body;
 
-    const dadosAtualizacao = { nome, cpf, telefone, endereco };
+    // Monta o objeto de atualização
+    const dadosAtualizacao = {
+      nome,
+      cpf,
+      telefone,
+      data_nascimento,
+      cargo
+    };
 
-    // Se uma nova foto foi enviada, atualiza o campo
+    // Regras específicas para cada tipo de usuário:
+    // - Cliente pode atualizar endereço
+    // - Funcionário não tinha endereço antes, mas agora pode preencher
+    if (endereco !== undefined) {
+      dadosAtualizacao.endereco = endereco;
+    }
+
+    // Se uma nova imagem foi enviada, salva o nome do arquivo
     if (req.file) {
       dadosAtualizacao.foto = req.file.filename;
     }
@@ -120,7 +126,7 @@ async function atualizarPerfil(req, res) {
 }
 
 async function cadastrarRefeicao(req, res) {
-  res.render("admin/cadastrarRefeicao"); // ou qualquer lógica que você quiser
+  res.render("admin/cadastrarRefeicao"); 
 }
 
 async function refeicoes(req, res) {
@@ -128,11 +134,11 @@ async function refeicoes(req, res) {
 }
 
 async function minhasRefeicoes(req, res) {
-  res.render("usuario/minhasRefeicoes"); // ou qualquer lógica que você quiser
+  res.render("usuario/minhasRefeicoes"); 
 }
 
 
-// FUNÇÃO: PERFIL ADMINISTRATIVO
+// FUNÇÃO: PERFIL ADMINISTRATIVO essa remover
 
 async function AdmPerfil(req, res) {
   res.send("Página administrativa do perfil");
