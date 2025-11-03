@@ -1,43 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tela Prêmio</title>
-
-  <!-- Bootstrap 4.1.3 -->
-  <link rel="stylesheet"
-    href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-    crossorigin="anonymous">
-
-  <!-- CSS do projeto -->
-  <link rel="stylesheet" href="/style/style2.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 
 <body class="fundo-amarelo">
 
-     <!-- Imagem responsiva -->
-    <img src="../img/logoRes.png" alt="Prêmio Almoço Grátis" class="img-fluid mt-4" style="max-width: 400px;">
-  </div>
-
   <div class="container text-center py-5">
+    <img src="/img/logoRes.png" alt="Prêmio Almoço Grátis" class="img-fluid mt-4" style="max-width: 400px;">
+
     <h1 class="mb-4">🎉 Você ganhou um almoço grátis!</h1>
     <p class="lead">Parabéns! Você completou as dez refeições e garantiu um almoço grátis na sua próxima visita ao restaurante.</p>
 
-   
+    <% if (premio && !premio.utilizado) { %>
+    <form action="/utilizar-premio/<%= premio.id %>?user=<%= username %>" method="POST" class="mt-4">
+      <button type="submit" class="btn btn-success btn-lg">Utilizar Prêmio</button>
+    </form>
+    <% } %>
 
-  <!-- Scripts Bootstrap 4.1.3 -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
+    <div class="mt-4">
+      <a href="/minhasRefeicoes?user=<%= username %>" class="btn btn-primary">Voltar para Minhas Refeições</a>
+    </div>
+  </div>
+
 </body>
-
 </html>

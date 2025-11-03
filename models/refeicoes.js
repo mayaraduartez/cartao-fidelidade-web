@@ -16,6 +16,10 @@ const Refeicao = sequelizeconnect.define(
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
+    ciclo_concluido: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   },
   {
     tableName: "refeicoes",

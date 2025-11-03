@@ -90,32 +90,45 @@
 
       <!-- Histórico de Refeições - apenas para CLIENTE -->
       <% if (!user.cargo) { %>
-        <h2 class="mt-5">Histórico de Refeições</h2>
-        <table class="table table-bordered text-center">
-          <thead style="background-color: black; color: white;">
-            <tr>
-              <th>Data</th>
-              <th>Refeição</th>
-              <th>Valor (R$)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>01/11/2025</td>
-              <td>Almoço</td>
-              <td>12,00</td>
-            </tr>
-            <tr>
-              <td>31/10/2025</td>
-              <td>Jantar</td>
-              <td>10,00</td>
-            </tr>
-          </tbody>
-        </table>
-      <% } %>
-    </form>
-  </div>
-
+  <h2 class="mt-5">Histórico de Refeições</h2>
+  
+  <% if (historicoRefeicoes && historicoRefeicoes.length > 0) { %>
+    <table class="table table-bordered text-center">
+      <thead style="background-color: black; color: white;">
+        <tr>
+          <th>Data</th>
+          <th>Valor (R$)</th>
+          <th>Ciclo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% historicoRefeicoes.forEach(refeicao => { %>
+        <tr>
+        <td>
+  <% if (refeicao.created_at) { %>
+    <%= new Date(refeicao.created_at).toLocaleDateString('pt-BR') %>
+  <% } else { %>
+    Data não disponível
+  <% } %>
+</td>
+          <td>R$ <%= refeicao.valor_comanda.toFixed(2) %></td>
+          <td>
+            <% if (refeicao.ciclo_concluido) { %>
+              <span class="badge badge-secondary">Concluído</span>
+            <% } else { %>
+              <span class="badge badge-success">Ativo</span>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div class="alert alert-info text-center">
+      <p>Nenhuma refeição registrada ainda.</p>
+    </div>
+  <% } %>
+<% } %>
   <!-- Script básico -->
   <script>
     // Mostra a prévia da foto antes do envio

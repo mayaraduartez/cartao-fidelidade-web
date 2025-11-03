@@ -42,4 +42,9 @@ router.post("/refeicoes", mainController.refeicoes);
 // Exibir refeições do cliente
 router.get("/minhasRefeicoes", mainController.minhasRefeicoes);
 
+// Rotas para prêmios
+router.get('/premio', mainController.verificarPremio);
+router.post('/conceder-premio', mainController.concederPremio);
+router.post('/utilizar-premio/:id', mainController.utilizarPremio);
+
 module.exports = router;
