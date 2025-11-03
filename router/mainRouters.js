@@ -1,17 +1,10 @@
 const express = require("express");
 const router = express.Router();
-
-const loginController = require("../controllers/loginController"); 
+const loginController = require("../controllers/loginController");
 const autenticacao = require("../config/autenticacao");
 const upload = require("../config/upload");
 const mainController = require("../controllers/mainController");
 
-console.log("Tipo de cadastrarCliente:", typeof mainController.cadastrarCliente);
-
-
-
-// ✅ Removido rota duplicada e incorreta
-// router.get('/login/telaRestaurante', mainController.abreCadastrarRestaurante); ← essa função não existe ou não é necessária
 
 // ✅ Mantida rota correta para exibir tela com listagem e formulário
 router.get("/login/telaRestaurante", mainController.listarRestaurantes);
@@ -32,16 +25,14 @@ router.post("/cadastrar-cliente", mainController.cadastrarCliente);
 router.post('/login', loginController.logar);
 router.post('/forgot', loginController.recuperar);
 router.post('/token', loginController.atualizarsenha);
-router.post("/cadastro", mainController.cadastrarUsuario);
 
 
-// ✅ Corrigida rota GET que estava chamando função de POST
-router.get("/admin/Cadastrarfuncionarios", (req, res) => {
-  res.render("admin/cadastrarFuncionario");
-});
+router.get("/admin/Cadastrarfuncionarios", mainController.tela_cadastra_funcionario
+);
 
-// Cadastro de funcionário
-router.post("/funcionarios", mainController.cadastrarFuncionario);
+router.post("/admin/Cadastrarfuncionarios", mainController.salva_cadastra_funcionario
+);
+
 
 // Listagem de funcionários
 router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);

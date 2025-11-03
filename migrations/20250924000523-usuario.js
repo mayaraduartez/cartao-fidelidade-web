@@ -17,7 +17,14 @@ module.exports = {
       email: { type: Sequelize.STRING, allowNull: false, unique:true },
       senha: {type: Sequelize.STRING, allowNull: false},
       telefone: Sequelize.STRING,
-      admin: { type: Sequelize.BOOLEAN, defaultValue: false }, 
+      GrupoId: {
+        type: Sequelize.INTEGER,
+          references: {
+            model: "grupos",
+            key: "id",
+          },
+          onUpdate: "CASCADE",
+      },
     });
   },
 

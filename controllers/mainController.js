@@ -2,10 +2,9 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
 
-const Funcionario = require("../models/funcionario");
 const Usuario = require("../models/Usuario");
 const Restaurante = require("../models/Restaurante");
-const upload = require("../config/upload"); // se estiver usando upload
+const Grupo = require('../models/Grupo');
 
 // ------------------------
 // 🧩 FUNÇÕES DE VALIDAÇÃO
@@ -276,7 +275,14 @@ async function atualizarPerfil(req, res) {
 
 async function listarClientes(req, res) {
   try {
-    const clientes = await Usuario.findAll();
+    const clientes = await Usuario.findAll({
+  where: {
+    [Op.or]: [
+      { GrupoId: null },       
+      { GrupoId: '' }         
+    ]
+  }
+});
     res.render("admin/listarClientes", { clientes });
   } catch (error) {
     console.error("Erro ao listar clientes:", error);
@@ -305,9 +311,22 @@ async function AdmPerfil(req, res) {
   res.send("Página administrativa do perfil");
 }
 
+async function tela_cadastra_funcionario(req, res) {
+  try {
+    // Consulta todos os grupos no banco de dados
+    const grupos = await Grupo.findAll();
+salva_cadastra_funcionario
+    // Renderiza a tela de cadastro de funcionário e passa os grupos para o template
+    res.render('admin/cadastrarFuncionario', { grupos });
+  } catch (error) {
+    console.error('Erro ao buscar grupos:', error);
+    res.status(500).send('Erro interno do servidor');
+  }
+}
 
-console.log("Função cadastrarCliente carregada:", typeof cadastrarCliente);
+async function salva_cadastra_funcionario(req,res){
 
+}
 
 // -----------------------------
 // 🚀 EXPORTA TUDO
@@ -334,5 +353,7 @@ module.exports = {
   refeicoes,
   minhasRefeicoes,
   listarClientes,
-  cadastrarCliente
+  cadastrarCliente,
+  tela_cadastra_funcionario,
+  salva_cadastra_funcionario
 };
