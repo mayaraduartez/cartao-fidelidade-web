@@ -5,43 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Meu perfil</title>
 
-  <!-- Bootstrap -->
+  
+      <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-
-  <link rel="stylesheet" href="/style/style2.css">
+  <link rel="stylesheet" type="text/css" href="/css/style2.css">
 </head>
 
-<body class="fundo-amarelo">
+<body>
   <div class="container mt-4">
-    <h1 class="mb-4">Meu perfil</h1>
+    <h1 class="mb-4 text-center">Meu Perfil</h1>
 
-    <!-- FORMULÁRIO ÚNICO -->
     <form action="/atualizarPerfil" method="post" enctype="multipart/form-data">
       <div class="row">
-        <!-- Coluna da foto + QR Code -->
+        <!-- Coluna da foto -->
         <div class="col-md-4 text-center mb-4">
-          <!-- Foto do usuário -->
-          <div class="text-left pl-3">
-            <% if (user.foto) { %>
-              <img id="previewFoto" src="/images/<%= user.foto %>" alt="Foto de perfil"
-                   style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"
-                   class="mb-2">
-            <% } else { %>
-              <img id="previewFoto" src="/img/default.png" alt="Foto de perfil"
-                   style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"
-                   class="mb-2">
-            <% } %>
-          </div>
+          <img id="previewFoto"
+               src="<%= user.foto ? '/uploads/' + user.foto : '/img/default.png' %>"
+               alt="Foto de perfil"
+               style="width:150px;height:150px;border-radius:50%;object-fit:cover;margin-bottom:10px;">
 
-          <!-- Upload da foto -->
           <input type="file" id="foto" name="foto" accept="image/*" class="form-control-file mb-3">
 
-          <!-- QR Code -->
-          <label>Meu QRcode:</label><br>
-          <img src="/img/images.png" alt="QR Code" style="width: 100px;">
+          <div>
+            <label>Meu QR Code:</label><br>
+            <img src="/img/images.png" alt="QR Code" style="width: 100px;">
+          </div>
         </div>
 
         <!-- Coluna das informações -->
@@ -50,18 +41,42 @@
             <label>Nome:</label>
             <input type="text" name="nome" class="form-control" value="<%= user.nome || '' %>" required>
           </div>
+
+          <!-- Campos comuns (cliente e funcionário) -->
           <div class="form-group">
             <label>CPF:</label>
             <input type="text" name="cpf" class="form-control" value="<%= user.cpf || '' %>">
           </div>
+
+          <div class="form-group">
+            <label>Data de Nascimento:</label>
+            <input type="date" name="data_nascimento" class="form-control" value="<%= user.data_nascimento || '' %>">
+          </div>
+
           <div class="form-group">
             <label>Telefone:</label>
             <input type="tel" name="telefone" class="form-control" value="<%= user.telefone || '' %>">
           </div>
-          <div class="form-group">
-            <label>Endereço:</label>
-            <input type="text" name="endereco" class="form-control" value="<%= user.endereco || '' %>">
-          </div>
+
+          <% if (user.cargo) { %>
+            <!-- Funcionário -->
+            <div class="form-group">
+              <label>Cargo:</label>
+              <input type="text" name="cargo" class="form-control" value="<%= user.cargo %>" readonly>
+            </div>
+
+            <!-- Funcionário também pode adicionar o endereço (campo opcional) -->
+            <div class="form-group">
+              <label>Endereço (opcional):</label>
+              <input type="text" name="endereco" class="form-control" value="<%= user.endereco || '' %>">
+            </div>
+          <% } else { %>
+            <!-- Cliente -->
+            <div class="form-group">
+              <label>Endereço:</label>
+              <input type="text" name="endereco" class="form-control" value="<%= user.endereco || '' %>">
+            </div>
+          <% } %>
 
           <!-- Botões -->
           <div class="mt-4 d-flex flex-wrap gap-2">
@@ -72,52 +87,49 @@
         </div>
       </div>
 
-      <!-- Histórico -->
-      <h2 class="mt-5">Histórico de Refeições</h2>
-      <table class="table table-bordered text-center historico-refeicoes">
-        <thead class="thead-dark">
-          <tr>
-            <th>Data</th>
-            <th>Refeição</th>
-            <th>Valor (R$)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% if (user.historico && user.historico.length > 0) { %>
-            <% user.historico.forEach(item => { %>
-              <tr>
-                <td><%= item.data %></td>
-                <td><%= item.refeicao %></td>
-                <td><%= item.valor %></td>
-              </tr>
-            <% }) %>
-          <% } else { %>
-            <tr>
-              <td colspan="3">Nenhum histórico encontrado.</td>
-            </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </form>
-  </div>
-
-  <!-- Scripts -->
+      <!-- Histórico de Refeições - apenas para CLIENTE -->
+      <% if (!user.cargo) { %>
+  <h2 class="mt-5">Histórico de Refeições</h2>
+  
+  <% if (historicoRefeicoes && historicoRefeicoes.length > 0) { %>
+    <table class="table table-bordered text-center">
+      <thead style="background-color: black; color: white;">
+        <tr>
+          <th>Data</th>
+          <th>Valor (R$)</th>
+          <th>Ciclo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% historicoRefeicoes.forEach(refeicao => { %>
+        <tr>
+        <td>
+  <% if (refeicao.created_at) { %>
+    <%= new Date(refeicao.created_at).toLocaleDateString('pt-BR') %>
+  <% } else { %>
+    Data não disponível
+  <% } %>
+</td>
+          <td>R$ <%= refeicao.valor_comanda.toFixed(2) %></td>
+          <td>
+            <% if (refeicao.ciclo_concluido) { %>
+              <span class="badge badge-secondary">Concluído</span>
+            <% } else { %>
+              <span class="badge badge-success">Ativo</span>
+            <% } %>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <div class="alert alert-info text-center">
+      <p>Nenhuma refeição registrada ainda.</p>
+    </div>
+  <% } %>
+<% } %>
+  <!-- Script básico -->
   <script>
-    // Preview da imagem antes de enviar
-    document.getElementById("foto").addEventListener("change", function () {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          document.getElementById("previewFoto").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    function renovarCartao() {
-      alert("Solicitação de renovação de cartão enviada!");
-    }
-  </script>
-</body>
-</html>
+    // Mostra a prévia da foto antes do envio
+    const fotoInput = document.getElementById("foto");
+    const preview = document.getElementById("previewFoto");

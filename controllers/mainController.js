@@ -1,9 +1,14 @@
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
+const Sequelize = require('sequelize'); //r
 
 const Usuario = require("../models/Usuario");
-const Restaurante = require("../models/Restaurante");
+//const Restaurante = require("../models/Restaurante");
+const Refeicao = require("../models/refeicoes");
+const Premio = require("../models/Premio");
+//const Funcionario = require("../models/Funcionario"); 
+const upload = require("../config/upload")
 const Grupo = require('../models/Grupo');
 
 // ------------------------
@@ -76,7 +81,7 @@ async function cadastrarCliente(req, res) {
     res.status(500).send("Erro ao cadastrar cliente.");
   }
 }
-
+/*
 async function cadastrarFuncionario(req, res) {
   const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
 
@@ -164,12 +169,12 @@ async function buscarFuncionario(req, res) {
     console.error("Erro ao buscar funcionário:", error);
     res.status(500).send("Erro ao buscar funcionário.");
   }
-}
+} */
 
 // -----------------------------
 // 🍽️ RESTAURANTES
 // -----------------------------
-
+/*
 async function cadastrarRestaurante(req, res) {
   try {
     const { nome, endereco } = req.body;
@@ -228,7 +233,7 @@ async function excluirRestaurante(req, res) {
     res.status(500).send("Erro ao excluir restaurante");
   }
 }
-
+*/
 
 // -----------------------------
 // 👤 PERFIL DE USUÁRIO
@@ -240,32 +245,73 @@ async function MeuPerfil(req, res) {
       return res.status(401).send("Usuário não autenticado.");
     }
 
+    // Busca o usuário no banco
     const usuario = await Usuario.findByPk(req.user.id);
+
     if (!usuario) {
       return res.status(404).send("Usuário não encontrado.");
     }
 
-    res.render("login/meuPerfil.ejs", { user: usuario });
+    // CORREÇÃO: Buscar refeições usando o CPF/EMAIL do usuário LOGADO
+    const historicoRefeicoes = await Refeicao.findAll({
+      where: {
+        [Sequelize.Op.or]: [
+          { cpf: usuario.cpf },      
+          { email: usuario.email }   
+        ]
+      },
+      order: [['created_at', 'DESC']]
+    });
+
+    // Renderiza o EJS passando os dados do usuário e histórico
+    res.render("login/meuPerfil.ejs", { 
+      user: usuario,
+      historicoRefeicoes: historicoRefeicoes 
+    });
   } catch (error) {
     console.error("Erro ao carregar perfil:", error);
     res.status(500).send("Erro ao carregar o perfil do usuário.");
   }
 }
 
+
+// FUNÇÃO: ATUALIZA PERFIL
 async function atualizarPerfil(req, res) {
   try {
     if (!req.user || !req.user.id) {
       return res.status(401).send("Usuário não autenticado.");
     }
 
-    const { nome, cpf, telefone, endereco } = req.body;
-    const dadosAtualizacao = { nome, cpf, telefone, endereco };
+    // Captura os dados do formulário
+    const { nome, cpf, telefone, endereco, data_nascimento, cargo } = req.body;
 
+    // Monta o objeto de atualização
+    const dadosAtualizacao = {
+      nome,
+      cpf,
+      telefone,
+      data_nascimento,
+      cargo
+    };
+
+    // Regras específicas para cada tipo de usuário:
+    // - Cliente pode atualizar endereço
+    // - Funcionário não tinha endereço antes, mas agora pode preencher
+    if (endereco !== undefined) {
+      dadosAtualizacao.endereco = endereco;
+    }
+
+    // Se uma nova imagem foi enviada, salva o nome do arquivo
     if (req.file) {
       dadosAtualizacao.foto = req.file.filename;
     }
 
-    await Usuario.update(dadosAtualizacao, { where: { id: req.user.id } });
+    // Atualiza os dados no banco
+    await Usuario.update(dadosAtualizacao, {
+      where: { id: req.user.id }
+    });
+
+    // Redireciona de volta ao perfil
     res.redirect("/meuPerfil");
   } catch (error) {
     console.error("Erro ao atualizar perfil:", error);
@@ -295,22 +341,222 @@ async function listarClientes(req, res) {
 // ⚙️ OUTRAS FUNÇÕES
 // -----------------------------
 
+// ========================
+// 📌 RENDERIZA A TELA INICIAL
+// ========================
 async function cadastrarRefeicao(req, res) {
-  res.render("admin/cadastrarRefeicao");
+  res.render("login/principal");
 }
 
+// ========================
+// 📌 CADASTRAR UMA REFEIÇÃO
+// ========================
 async function refeicoes(req, res) {
-  res.send("Refeição cadastrada!");
+  try {
+    const { cpf_email, valor_comanda } = req.body;
+
+    if (!cpf_email || !valor_comanda) {
+      return res.status(400).send("Campos obrigatórios não preenchidos!");
+    }
+
+    const isEmail = cpf_email.includes("@");
+
+    // Cria nova refeição
+    await Refeicao.create({
+      cpf: isEmail ? null : cpf_email,
+      email: isEmail ? cpf_email : null,
+      valor_comanda,
+    });
+
+    // Verifica se deve conceder prêmio
+    await checarOuConcederPremio(cpf_email);
+
+    res.redirect(`/minhasRefeicoes?user=${encodeURIComponent(cpf_email)}`);
+  } catch (error) {
+    console.error("Erro ao salvar refeição:", error);
+    res.status(500).send("Erro ao registrar refeição");
+  }
 }
 
+// ========================
+// 📌 LISTAR REFEIÇÕES DO USUÁRIO
+// ========================
 async function minhasRefeicoes(req, res) {
-  res.render("usuario/minhasRefeicoes");
+  try {
+    const username = req.query.user;
+    if (!username) return res.status(400).send("Usuário não especificado");
+
+    const refeicoes = await Refeicao.findAll({
+      where: {
+        [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+        ciclo_concluido: false,
+      },
+      order: [["created_at", "DESC"]],
+    });
+
+    const premio = await Premio.findOne({
+      where: {
+        [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+        utilizado: false,
+      },
+    });
+
+    res.render("login/meuCartao", {
+      username,
+      refeicoes,
+      totalRefeicoes: refeicoes.length,
+      temPremio: !!premio,
+      premio,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar refeições:", error);
+    res.status(500).send("Erro ao carregar suas refeições");
+  }
 }
 
-async function AdmPerfil(req, res) {
-  res.send("Página administrativa do perfil");
+// ========================
+// 📌 VER PRÊMIO (TELA)
+// ========================
+async function verificarPremio(req, res) {
+  try {
+    const username = req.query.user;
+    if (!username) return res.status(400).send("Usuário não especificado");
+
+    const infoPremio = await obterInfoPremio(username);
+
+    res.render("login/telaPremio", {
+      username,
+      ...infoPremio,
+    });
+  } catch (error) {
+    console.error("Erro ao verificar prêmio:", error);
+    res.status(500).send("Erro ao verificar prêmio");
+  }
 }
 
+// ========================
+// 📌 CONCEDER MANUALMENTE UM PRÊMIO
+// ========================
+async function concederPremio(req, res) {
+  try {
+    const username = req.body.user;
+    if (!username) return res.status(400).send("Usuário não especificado");
+
+    const infoPremio = await checarOuConcederPremio(username, true);
+
+    res.render("login/telaPremio", {
+      username,
+      ...infoPremio,
+    });
+  } catch (error) {
+    console.error("Erro ao conceder prêmio:", error);
+    res.status(500).send("Erro ao conceder prêmio");
+  }
+}
+
+// ========================
+// 📌 UTILIZAR UM PRÊMIO (ZERAR CICLO)
+// ========================
+async function utilizarPremio(req, res) {
+  try {
+    const premioId = req.params.id;
+    const username = req.query.user;
+
+    const premio = await Premio.findByPk(premioId);
+    if (!premio) return res.status(404).send("Prêmio não encontrado");
+
+    // Marca o prêmio como utilizado
+    await premio.update({
+      utilizado: true,
+      data_utilizacao: new Date(),
+    });
+
+    // Marca refeições como concluídas
+    await Refeicao.update(
+      { ciclo_concluido: true },
+      {
+        where: {
+          [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+          ciclo_concluido: false,
+        },
+      }
+    );
+
+    res.redirect(
+      `/minhasRefeicoes?user=${encodeURIComponent(username)}&msg=Prêmio utilizado! Ciclo reiniciado.`
+    );
+  } catch (error) {
+    console.error("Erro ao utilizar prêmio:", error);
+    res.status(500).send("Erro ao utilizar prêmio");
+  }
+}
+
+// ========================
+// 🔁 FUNÇÕES AUXILIARES
+// ========================
+
+// Retorna total de refeições e prêmio atual
+async function obterInfoPremio(username) {
+  const totalRefeicoes = await Refeicao.count({
+    where: {
+      [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+      ciclo_concluido: false,
+    },
+  });
+
+  const premio = await Premio.findOne({
+    where: {
+      [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+      utilizado: false,
+    },
+  });
+
+  return {
+    totalRefeicoes,
+    temPremio: !!premio,
+    premio,
+  };
+}
+
+// Checa se precisa conceder um prêmio automaticamente
+async function checarOuConcederPremio(username, manual = false) {
+  const { totalRefeicoes, premio } = await obterInfoPremio(username);
+
+  // Se já tem prêmio, só retorna
+  if (premio) {
+    return {
+      totalRefeicoes,
+      temPremio: true,
+      premio,
+      msg: manual ? "Você já tem um prêmio pendente!" : undefined,
+    };
+  }
+
+  // Concede prêmio se completou 10 refeições
+  if (totalRefeicoes >= 10) {
+    const isEmail = username.includes("@");
+    const novoPremio = await Premio.create({
+      cpf: isEmail ? null : username,
+      email: isEmail ? username : null,
+    });
+
+    console.log(`🎉 Prêmio concedido para ${username}`);
+    return {
+      totalRefeicoes,
+      temPremio: true,
+      premio: novoPremio,
+      msg: manual ? "Prêmio concedido com sucesso!" : undefined,
+    };
+  }
+
+  return {
+    totalRefeicoes,
+    temPremio: false,
+    premio: null,
+    msg: manual ? "Você ainda não atingiu 10 refeições." : undefined,
+  };
+}
+/*
 async function tela_cadastra_funcionario(req, res) {
   try {
     // Consulta todos os grupos no banco de dados
@@ -327,33 +573,35 @@ salva_cadastra_funcionario
 async function salva_cadastra_funcionario(req,res){
 
 }
-
+*/
 // -----------------------------
 // 🚀 EXPORTA TUDO
 // -----------------------------
 
 module.exports = {
   // funcionários
-  cadastrarFuncionario,
+ /* cadastrarFuncionario,
   listarFuncionarios,
-  buscarFuncionario,
+  buscarFuncionario,*/
 
   // restaurantes
-  //abreCadastrarRestaurante,
+  /*abreCadastrarRestaurante,
   cadastrarRestaurante,
   listarRestaurantes,
   editarRestaurante,
-  excluirRestaurante,
+  excluirRestaurante,*/
 
   // perfis e refeições
   MeuPerfil,
   atualizarPerfil,
-  AdmPerfil,
   cadastrarRefeicao,
   refeicoes,
   minhasRefeicoes,
   listarClientes,
   cadastrarCliente,
-  tela_cadastra_funcionario,
-  salva_cadastra_funcionario
+  //tela_cadastra_funcionario,
+  //salva_cadastra_funcionario,
+  verificarPremio,
+  concederPremio,
+  utilizarPremio
 };

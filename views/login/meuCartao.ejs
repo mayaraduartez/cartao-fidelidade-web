@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<>
   <meta charset="UTF-8">
   <title>Meu Cartão - Cliente</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,30 +15,30 @@
   <div class="cartao-container">
     <h1>Meu cartão</h1>
     <h2>Junte 10 refeições e receba um almoço gratuito.</h2>
-
     <div class="punch-grid">
-      <div class="punch-box">✅</div>
-      <div class="punch-box">✅</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
-      <div class="punch-box blank">⬜</div>
+      <% for (let i = 0; i < 10; i++) { %>
+        <div class="punch-box <%= i < refeicoes.length ? '' : 'blank' %>">
+          <%= i < refeicoes.length ? '✅' : '⬜' %>
+        </div>
+      <% } %>
     </div>
   </div>
 
-  <!-- Bootstrap JS (opcional) -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
+  <!-- Botão condicional -->
+  <div class="text-center mt-4">
+    <% if (refeicoes.length >= 10) { %>
+      <!-- Usuário completou o cartão -->
+      <a href="/premio?user=<%= username %>" class="btn btn-success btn-lg">
+        🎁 Resgatar Meu Prêmio
+      </a>
+    <% } else { %>
+      <!-- Usuário ainda não completou -->
+      <button class="btn btn-secondary btn-lg" disabled>
+        ⏳ Complete <%= 10 - refeicoes.length %> refeições para ganhar
+      </button>
+    <% } %>
+  </div>
+
+  
 </body>
 </html>

@@ -17,6 +17,7 @@ module.exports = {
       email: { type: Sequelize.STRING, allowNull: false, unique:true },
       senha: {type: Sequelize.STRING, allowNull: false},
       telefone: Sequelize.STRING,
+      endereco: Sequelize.STRING,
       GrupoId: {
         type: Sequelize.INTEGER,
           references: {
