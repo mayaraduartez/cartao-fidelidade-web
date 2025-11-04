@@ -20,8 +20,9 @@ const Token = require("./models/Token");
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);
 
-
-
+//Usuário e grupo
+Usuario.belongsToMany(Grupo, { through: 'usuarios_grupos' });
+Grupo.belongsToMany(Usuario, { through: 'usuarios_grupos' });
 
 
 Grupo.belongsToMany(Permissao, { through: 'grupos_permissao' });

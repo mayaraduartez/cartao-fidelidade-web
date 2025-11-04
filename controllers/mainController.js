@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 
 const Usuario = require("../models/Usuario");
 const Restaurante = require("../models/Restaurante");
-const Grupo = require('../models/Grupo');
+const Grupo = require("../models/Grupo");
 
 // ------------------------
 // 🧩 FUNÇÕES DE VALIDAÇÃO
@@ -32,26 +32,35 @@ function validarCPF(cpf) {
 // -----------------------------
 
 async function cadastrarCliente(req, res) {
-  const { nome, sobrenome, email, telefone, cpf, data_nascimento, senha } = req.body;
+  const { nome, sobrenome, email, telefone, cpf, data_nascimento, senha } =
+    req.body;
 
-  if (!nome || !sobrenome || !email || !telefone || !cpf || !data_nascimento || !senha) {
+  if (
+    !nome ||
+    !sobrenome ||
+    !email ||
+    !telefone ||
+    !cpf ||
+    !data_nascimento ||
+    !senha
+  ) {
     return res.render("login/cadastrar", {
       msg: "Preencha todos os campos obrigatórios!",
-      msgType: "error"
+      msgType: "error",
     });
   }
 
   try {
     const clienteExistente = await Usuario.findOne({
       where: {
-        [Op.or]: [{ cpf }, { email }]
-      }
+        [Op.or]: [{ cpf }, { email }],
+      },
     });
 
     if (clienteExistente) {
       return res.render("login/cadastrar", {
         msg: "CPF ou e-mail já cadastrados!",
-        msgType: "warning"
+        msgType: "warning",
       });
     }
 
@@ -64,12 +73,12 @@ async function cadastrarCliente(req, res) {
       telefone,
       cpf,
       data_nascimento,
-      senha: hash
+      senha: hash,
     });
 
     res.render("login/cadastrar", {
       msg: "Cliente cadastrado com sucesso!",
-      msgType: "success"
+      msgType: "success",
     });
   } catch (error) {
     console.error("Erro ao cadastrar cliente:", error);
@@ -77,61 +86,15 @@ async function cadastrarCliente(req, res) {
   }
 }
 
-async function cadastrarFuncionario(req, res) {
-  const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
-
-  if (!nome || !email || !senha || !funcao || !cpf || !data_nasc || !telefone) {
-    return res.render("admin/cadastrarFuncionario", {
-      msg: "Preencha todos os campos obrigatórios!",
-      msgType: "error"
-    });
-  }
-
-  if (!validarCPF(cpf)) {
-    return res.render("admin/cadastrarFuncionario", {
-      msg: "CPF inválido! Verifique os números digitados.",
-      msgType: "error"
-    });
-  }
-
-  try {
-    const cpfExiste = await Funcionario.findOne({ where: { cpf } });
-    if (cpfExiste) {
-      return res.render("admin/cadastrarFuncionario", {
-        msg: "Este CPF já está cadastrado!",
-        msgType: "warning"
-      });
-    }
-
-    const hash = await bcrypt.hash(senha, 10);
-    await Funcionario.create({
-      nome,
-      email,
-      funcao,
-      cpf,
-      data_nasc,
-      telefone,
-      senha: hash,
-      admin: admin === "on"
-    });
-
-    res.render("admin/cadastrarFuncionario", {
-      msg: "Funcionário cadastrado com sucesso!",
-      msgType: "success"
-    });
-  } catch (error) {
-    console.error("Erro ao cadastrar funcionário:", error);
-    res.status(500).send("Erro ao cadastrar funcionário.");
-  }
-}
-
 async function listarFuncionarios(req, res) {
   try {
-    const funcionarios = await Funcionario.findAll();
+    const funcionarios = await Usuario.findAll({
+      include: { model: Grupo },
+    });
     res.render("admin/listarFuncionarios", { funcionarios });
   } catch (error) {
     console.error("Erro ao listar funcionários:", error);
-    res.status(500).send("Erro ao carregar lista de funcionários.");
+    res.status(500).send("Erro ao listar funcionários");
   }
 }
 
@@ -145,19 +108,21 @@ async function abreCadastrarRestaurante(req, res) {
   }
 }
 
-
-
 async function buscarFuncionario(req, res) {
   const { nome, id } = req.query;
   let where = {};
+
   if (nome) where.nome = { [Op.iLike]: `%${nome}%` };
   if (id) where.id = id;
 
   try {
     const funcionarios =
       Object.keys(where).length > 0
-        ? await Funcionario.findAll({ where })
-        : await Funcionario.findAll();
+        ? await Usuario.findAll({
+            where,
+            include: Grupo,
+          })
+        : await Usuario.findAll({ include: Grupo });
 
     res.render("admin/listarFuncionarios", { funcionarios, nome, id });
   } catch (error) {
@@ -179,7 +144,6 @@ async function cadastrarRestaurante(req, res) {
 
     await Restaurante.create({ nome, endereco });
     res.redirect("/login/telaRestaurante");
-
   } catch (error) {
     console.error("Erro ao cadastrar restaurante:", error);
     res.status(500).send("Erro ao cadastrar restaurante");
@@ -229,7 +193,6 @@ async function excluirRestaurante(req, res) {
   }
 }
 
-
 // -----------------------------
 // 👤 PERFIL DE USUÁRIO
 // -----------------------------
@@ -276,20 +239,16 @@ async function atualizarPerfil(req, res) {
 async function listarClientes(req, res) {
   try {
     const clientes = await Usuario.findAll({
-  where: {
-    [Op.or]: [
-      { GrupoId: null },       
-      { GrupoId: '' }         
-    ]
-  }
-});
+      where: {
+        [Op.or]: [{ GrupoId: null }, { GrupoId: "" }],
+      },
+    });
     res.render("admin/listarClientes", { clientes });
   } catch (error) {
     console.error("Erro ao listar clientes:", error);
     res.status(500).send("Erro ao carregar lista de clientes.");
   }
 }
-
 
 // -----------------------------
 // ⚙️ OUTRAS FUNÇÕES
@@ -315,17 +274,91 @@ async function tela_cadastra_funcionario(req, res) {
   try {
     // Consulta todos os grupos no banco de dados
     const grupos = await Grupo.findAll();
-salva_cadastra_funcionario
+    salva_cadastra_funcionario;
     // Renderiza a tela de cadastro de funcionário e passa os grupos para o template
-    res.render('admin/cadastrarFuncionario', { grupos });
+    res.render("admin/cadastrarFuncionario", { grupos });
   } catch (error) {
-    console.error('Erro ao buscar grupos:', error);
-    res.status(500).send('Erro interno do servidor');
+    console.error("Erro ao buscar grupos:", error);
+    res.status(500).send("Erro interno do servidor");
   }
 }
 
-async function salva_cadastra_funcionario(req,res){
+async function salva_cadastra_funcionario(req, res) {
+  const { nome, cpf, data_nasc, telefone, email, senha, grupo } = req.body;
 
+  // Verificação de campos obrigatórios
+  if (!nome || !email || !senha || !cpf || !data_nasc || !telefone || !grupo) {
+    const grupos = await Grupo.findAll();
+    return res.render("admin/cadastrarFuncionario", {
+      msg: "Preencha todos os campos obrigatórios!",
+      msgType: "error",
+      grupos,
+    });
+  }
+
+  // Validação de CPF
+  if (!validarCPF(cpf)) {
+    const grupos = await Grupo.findAll();
+    return res.render("admin/cadastrarFuncionario", {
+      msg: "CPF inválido! Verifique os números digitados.",
+      msgType: "error",
+      grupos,
+    });
+  }
+
+  try {
+    // Verifica se já existe funcionário com o mesmo CPF ou email
+    const funcionarioExistente = await Usuario.findOne({
+      where: {
+        [Op.or]: [{ cpf }, { email }],
+      },
+    });
+
+    if (funcionarioExistente) {
+      const grupos = await Grupo.findAll();
+      return res.render("admin/cadastrarFuncionario", {
+        msg: "Este CPF ou e-mail já está cadastrado!",
+        msgType: "warning",
+        grupos,
+      });
+    }
+
+    // Gera o hash da senha
+    const hash = await bcrypt.hash(senha, 10);
+
+    // Cria o funcionário (na tabela `usuarios`)
+    const usuario = await Usuario.create({
+      nome,
+      cpf,
+      data_nascimento: data_nasc,
+      telefone,
+      email,
+      senha: hash,
+    });
+
+    // Busca o grupo selecionado
+    const grupoSelecionado = await Grupo.findByPk(grupo); // 'grupo' vem do form
+
+    // Associa o usuário ao grupo
+    if (grupoSelecionado) {
+      await usuario.addGrupo(grupoSelecionado);
+    }
+    // Recarrega os grupos e mostra mensagem de sucesso
+    const grupos = await Grupo.findAll();
+    res.render("admin/cadastrarFuncionario", {
+      msg: "Funcionário cadastrado com sucesso!",
+      msgType: "success",
+      grupos,
+    });
+  } catch (error) {
+    console.error("Erro ao cadastrar funcionário:", error);
+    const grupos = await Grupo.findAll();
+    res.render("admin/cadastrarFuncionario", {
+      msg: "Erro ao cadastrar funcionário. Tente novamente.",
+      msgType: "error",
+      grupos,
+    });
+  }
 }
 
 // -----------------------------
@@ -334,7 +367,6 @@ async function salva_cadastra_funcionario(req,res){
 
 module.exports = {
   // funcionários
-  cadastrarFuncionario,
   listarFuncionarios,
   buscarFuncionario,
 
@@ -355,5 +387,5 @@ module.exports = {
   listarClientes,
   cadastrarCliente,
   tela_cadastra_funcionario,
-  salva_cadastra_funcionario
+  salva_cadastra_funcionario,
 };

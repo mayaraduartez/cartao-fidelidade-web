@@ -1,34 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-  <title>Funcionários Cadastrados</title>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="/css/style3.css">
-  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
-
-</head>
-<body>
+  <head>
+    <title>Funcionários Cadastrados</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/style3.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+  </head>
+  <body>
     <div class="tela-funcionarios">
       <div class="cabecalho-funcionarios">
-    <div class="logo-area">
-      <img src="/images/logoRes.png" alt="Logo">
-    </div>
-      <h1 class="titulo-funcionarios">Funcionários</h1>
-    </div>
+        <div class="logo-area">
+          <img src="/images/logoRes.png" alt="Logo" />
+        </div>
+        <h1 class="titulo-funcionarios">Funcionários</h1>
+      </div>
 
       <div class="box-formulario">
         <h2>Buscar Funcionários</h2>
-      <form method="get" action="/admin/funcionarios/buscar">
-      <input type="text" name="nome" class="input100" placeholder="Buscar por nome">
-      <input type="number" name="id" class="input100" placeholder="Buscar por ID">
-  
-      <div class="btn-group-form">
-        <button type="submit" class="login100-form-btn">Buscar</button>
-        <button type="button" class="login100-form-btnlimpar-btn" onclick="window.location.href='/admin/listarFuncionarios'">Limpar</button>
+        <form method="get" action="/admin/funcionarios/buscar">
+          <input
+            type="text"
+            name="nome"
+            class="input100"
+            placeholder="Buscar por nome"
+          />
+          <input
+            type="number"
+            name="id"
+            class="input100"
+            placeholder="Buscar por ID"
+          />
 
-      </div>
-</form>
-
+          <div class="btn-group-form">
+            <button type="submit" class="login100-form-btn">Buscar</button>
+            <button
+              type="button"
+              class="login100-form-btnlimpar-btn"
+              onclick="window.location.href='/admin/listarFuncionarios'"
+            >
+              Limpar
+            </button>
+          </div>
+        </form>
       </div>
 
       <div class="box-tabela">
@@ -38,7 +51,7 @@
             <tr>
               <th>ID</th>
               <th>Nome</th>
-              <th>Função</th>
+              <th>Grupo</th>
               <th>CPF</th>
               <th>Data de Nascimento</th>
               <th>Telefone</th>
@@ -48,20 +61,28 @@
           </thead>
           <tbody>
             <% funcionarios.forEach(func => { %>
-              <tr>
-                <td><%= func.id %></td>
-                <td><%= func.nome %></td>
-                <td><%= func.funcao %></td>
-                <td><%= func.cpf %></td>
-                <td><%= func.data_nasc %></td>
-                <td><%= func.telefone %></td>
-                <td><%= func.email %></td>
-                <td><%= func.admin ? "Sim" : "Não" %></td>
-              </tr>
+            <tr>
+              <td><%= func.id %></td>
+              <td><%= func.nome %></td>
+              <td>
+                <% if (func.Grupos && func.Grupos.length > 0) { %> <%=
+                func.Grupos.map(g => g.nome).join(", ") %> <% } else { %> Sem
+                grupo <% } %>
+              </td>
+              <td><%= func.cpf %></td>
+              <td>
+                <%= func.data_nascimento ? new
+                Date(func.data_nascimento).toISOString().split('T')[0] : '' %>
+              </td>
+
+              <td><%= func.telefone %></td>
+              <td><%= func.email %></td>
+              <td><%= func.admin ? "Sim" : "Não" %></td>
+            </tr>
             <% }) %>
           </tbody>
         </table>
       </div>
     </div>
-</body>
+  </body>
 </html>
