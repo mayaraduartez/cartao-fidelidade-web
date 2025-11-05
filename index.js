@@ -58,6 +58,10 @@ app.use(
   })
 );
 
+//usuário e grupo
+Usuario.belongsTo(Grupo, { foreignKey: 'GrupoId' });
+Grupo.hasMany(Usuario, { foreignKey: 'GrupoId' });
+
 app.use(passport.authenticate("session"));
 
 app.use("/", mainRouter);

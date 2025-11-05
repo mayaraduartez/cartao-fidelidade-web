@@ -82,57 +82,12 @@ async function cadastrarCliente(req, res) {
   }
 }
 
-async function cadastrarFuncionario(req, res) {
-  const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
-
-  if (!nome || !email || !senha || !funcao || !cpf || !data_nasc || !telefone) {
-    return res.render("admin/cadastrarFuncionario", {
-      msg: "Preencha todos os campos obrigatórios!",
-      msgType: "error"
-    });
-  }
-
-  if (!validarCPF(cpf)) {
-    return res.render("admin/cadastrarFuncionario", {
-      msg: "CPF inválido! Verifique os números digitados.",
-      msgType: "error"
-    });
-  }
-
-  try {
-    const cpfExiste = await Funcionario.findOne({ where: { cpf } });
-    if (cpfExiste) {
-      return res.render("admin/cadastrarFuncionario", {
-        msg: "Este CPF já está cadastrado!",
-        msgType: "warning"
-      });
-    }
-
-    const hash = await bcrypt.hash(senha, 10);
-    await Funcionario.create({
-      nome,
-      email,
-      funcao,
-      cpf,
-      data_nasc,
-      telefone,
-      senha: hash,
-      admin: admin === "on"
-    });
-
-    res.render("admin/cadastrarFuncionario", {
-      msg: "Funcionário cadastrado com sucesso!",
-      msgType: "success"
-    });
-  } catch (error) {
-    console.error("Erro ao cadastrar funcionário:", error);
-    res.status(500).send("Erro ao cadastrar funcionário.");
-  }
-}
 
 async function listarFuncionarios(req, res) {
   try {
-    const funcionarios = await Funcionario.findAll();
+    const funcionarios = await Usuario.findAll({
+      include: [{ model: Grupo }]
+    });
     res.render("admin/listarFuncionarios", { funcionarios });
   } catch (error) {
     console.error("Erro ao listar funcionários:", error);
@@ -161,15 +116,15 @@ async function buscarFuncionario(req, res) {
   try {
     const funcionarios =
       Object.keys(where).length > 0
-        ? await Funcionario.findAll({ where })
-        : await Funcionario.findAll();
+        ? await Usuario.findAll({ where })
+        : await Usuario.findAll();
 
     res.render("admin/listarFuncionarios", { funcionarios, nome, id });
   } catch (error) {
     console.error("Erro ao buscar funcionário:", error);
     res.status(500).send("Erro ao buscar funcionário.");
   }
-} 
+}
 
 // -----------------------------
 // 🍽️ RESTAURANTES
@@ -570,17 +525,69 @@ salva_cadastra_funcionario
   }
 }
 
-async function salva_cadastra_funcionario(req,res){
+async function salva_cadastra_funcionario(req, res) {
+  const { nome, sobrenome, email, cpf, data_nasc, telefone, senha, admin, grupo } = req.body;
 
+  if (!nome || !sobrenome || !email || !senha || !cpf || !data_nasc || !telefone) {
+    const grupos = await Grupo.findAll();
+    return res.render("admin/cadastrarFuncionario", {
+      msg: "Preencha todos os campos obrigatórios!",
+      msgType: "error",
+      grupos
+    });
+  }
+
+  if (!validarCPF(cpf)) {
+    const grupos = await Grupo.findAll();
+    return res.render("admin/cadastrarFuncionario", {
+      msg: "CPF inválido! Verifique os números digitados.",
+      msgType: "error",
+      grupos
+    });
+  }
+
+  try {
+    const cpfExiste = await Usuario.findOne({ where: { cpf } });
+    const grupos = await Grupo.findAll();
+
+    if (cpfExiste) {
+      return res.render("admin/cadastrarFuncionario", {
+        msg: "Este CPF já está cadastrado!",
+        msgType: "warning",
+        grupos
+      });
+    }
+
+    const hash = await bcrypt.hash(senha, 10);
+
+    await Usuario.create({
+      nome,
+      sobrenome,
+      email,
+      cpf,
+      data_nasc,
+      telefone,
+      senha: hash,
+      admin: admin === "on",
+      GrupoId: grupo
+    });
+
+    res.render("admin/cadastrarFuncionario", {
+      msg: "Funcionário cadastrado com sucesso!",
+      msgType: "success",
+      grupos
+    });
+  } catch (error) {
+    console.error("Erro ao cadastrar funcionário:", error);
+    res.status(500).send("Erro interno ao cadastrar funcionário.");
+  }
 }
-
 // -----------------------------
 // 🚀 EXPORTA TUDO
 // -----------------------------
 
 module.exports = {
   // funcionários
-  cadastrarFuncionario,
   listarFuncionarios,
   buscarFuncionario,
 
