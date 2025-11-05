@@ -23,9 +23,17 @@ const Usuario = sequelizeconnect.define(
     telefone: {
         type: DataTypes.STRING,
     },
-     endereco: {
+     rua: {
   type: DataTypes.STRING,
-  allowNull: true,
+},
+cidade: {
+  type: DataTypes.STRING,
+},
+nro_endereco: {
+  type: DataTypes.STRING,
+},
+UF: {
+  type: DataTypes.STRING,
 },
   email: {
       type: DataTypes.STRING,
