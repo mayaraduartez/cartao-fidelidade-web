@@ -81,7 +81,7 @@ async function cadastrarCliente(req, res) {
     res.status(500).send("Erro ao cadastrar cliente.");
   }
 }
-/*
+
 async function cadastrarFuncionario(req, res) {
   const { nome, email, funcao, cpf, data_nasc, telefone, senha, admin } = req.body;
 
@@ -169,12 +169,12 @@ async function buscarFuncionario(req, res) {
     console.error("Erro ao buscar funcionário:", error);
     res.status(500).send("Erro ao buscar funcionário.");
   }
-} */
+} 
 
 // -----------------------------
 // 🍽️ RESTAURANTES
 // -----------------------------
-/*
+
 async function cadastrarRestaurante(req, res) {
   try {
     const { nome, endereco } = req.body;
@@ -233,7 +233,7 @@ async function excluirRestaurante(req, res) {
     res.status(500).send("Erro ao excluir restaurante");
   }
 }
-*/
+
 
 // -----------------------------
 // 👤 PERFIL DE USUÁRIO
@@ -556,7 +556,7 @@ async function checarOuConcederPremio(username, manual = false) {
     msg: manual ? "Você ainda não atingiu 10 refeições." : undefined,
   };
 }
-/*
+
 async function tela_cadastra_funcionario(req, res) {
   try {
     // Consulta todos os grupos no banco de dados
@@ -573,23 +573,23 @@ salva_cadastra_funcionario
 async function salva_cadastra_funcionario(req,res){
 
 }
-*/
+
 // -----------------------------
 // 🚀 EXPORTA TUDO
 // -----------------------------
 
 module.exports = {
   // funcionários
- /* cadastrarFuncionario,
+  cadastrarFuncionario,
   listarFuncionarios,
-  buscarFuncionario,*/
+  buscarFuncionario,
 
   // restaurantes
-  /*abreCadastrarRestaurante,
+  abreCadastrarRestaurante,
   cadastrarRestaurante,
   listarRestaurantes,
   editarRestaurante,
-  excluirRestaurante,*/
+  excluirRestaurante,
 
   // perfis e refeições
   MeuPerfil,
@@ -599,8 +599,8 @@ module.exports = {
   minhasRefeicoes,
   listarClientes,
   cadastrarCliente,
-  //tela_cadastra_funcionario,
-  //salva_cadastra_funcionario,
+  tela_cadastra_funcionario,
+  salva_cadastra_funcionario,
   verificarPremio,
   concederPremio,
   utilizarPremio

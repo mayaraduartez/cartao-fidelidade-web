@@ -5,7 +5,7 @@ const autenticacao = require("../config/autenticacao");
 const upload = require("../config/upload");
 const mainController = require("../controllers/mainController");
 
-/*
+
 // ✅ Mantida rota correta para exibir tela com listagem e formulário
 router.get("/login/telaRestaurante", mainController.listarRestaurantes);
 
@@ -15,7 +15,7 @@ router.post("/restaurantes", mainController.cadastrarRestaurante);
 // ✅ Edição e exclusão
 router.post("/restaurantes/:id/editar", mainController.editarRestaurante);
 router.post("/restaurantes/:id/excluir", mainController.excluirRestaurante);
-*/
+
 // Páginas login
 router.get('/login', loginController.abrelogin);
 router.get('/cadastro', loginController.cadastrar);
@@ -26,7 +26,7 @@ router.post('/login', loginController.logar);
 router.post('/forgot', loginController.recuperar);
 router.post('/token', loginController.atualizarsenha);
 
-/*
+
 router.get("/admin/Cadastrarfuncionarios", mainController.tela_cadastra_funcionario
 );
 
@@ -37,7 +37,7 @@ router.post("/admin/Cadastrarfuncionarios", mainController.salva_cadastra_funcio
 // Listagem de funcionários
 router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
 router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
-*/
+
 // Rotas de perfil
 router.get('/meuPerfil', mainController.MeuPerfil);
 router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
