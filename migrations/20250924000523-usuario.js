@@ -18,6 +18,7 @@ module.exports = {
       senha: {type: Sequelize.STRING, allowNull: false},
       telefone: Sequelize.STRING,
       rua: Sequelize.STRING,
+      bairro: Sequelize.STRING,
       cidade: Sequelize.STRING,
       nro_endereco: Sequelize.STRING,
       UF: Sequelize.STRING,

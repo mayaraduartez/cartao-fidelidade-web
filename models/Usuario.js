@@ -26,6 +26,9 @@ const Usuario = sequelizeconnect.define(
      rua: {
   type: DataTypes.STRING,
 },
+ bairro: {
+  type: DataTypes.STRING,
+},
 cidade: {
   type: DataTypes.STRING,
 },

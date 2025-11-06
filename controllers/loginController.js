@@ -142,7 +142,7 @@ async function atualizarsenha(req, res) {
 
 const logar = passport.authenticate("local", {
     failureRedirect: "/login",
-    successRedirect: "/principaladm",
+    successRedirect: "/meuPerfil",
   });
 
 async function abrelogin(req, res) {

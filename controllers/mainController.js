@@ -207,18 +207,25 @@ async function MeuPerfil(req, res) {
       return res.status(404).send("Usuário não encontrado.");
     }
 
-    // CORREÇÃO: Buscar refeições usando o CPF/EMAIL do usuário LOGADO
-    const historicoRefeicoes = await Refeicao.findAll({
-      where: {
-        [Sequelize.Op.or]: [
-          { cpf: usuario.cpf },      
-          { email: usuario.email }   
-        ]
-      },
-      order: [['created_at', 'DESC']]
-    });
+    // CORREÇÃO: Adicionar tratamento de erro específico para as refeições
+    let historicoRefeicoes = [];
+    try {
+      historicoRefeicoes = await Refeicao.findAll({
+        where: {
+          [Sequelize.Op.or]: [
+            { cpf: usuario.cpf },      
+            { email: usuario.email }   
+          ]
+        },
+        order: [['created_at', 'DESC']]
+      });
+    } catch (refeicaoError) {
+      console.log("Aviso: Não foi possível carregar o histórico de refeições:", refeicaoError.message);
+      // Continua com array vazio - NÃO quebra o fluxo
+      historicoRefeicoes = [];
+    }
 
-    // Renderiza o EJS passando os dados do usuário e histórico
+    // Renderiza o EJS passando os dados do usuário e histórico (mesmo que vazio)
     res.render("login/meuPerfil.ejs", { 
       user: usuario,
       historicoRefeicoes: historicoRefeicoes 
@@ -229,7 +236,6 @@ async function MeuPerfil(req, res) {
   }
 }
 
-
 // FUNÇÃO: ATUALIZA PERFIL
 async function atualizarPerfil(req, res) {
   try {
@@ -238,23 +244,39 @@ async function atualizarPerfil(req, res) {
     }
 
     // Captura os dados do formulário
-    const { nome, cpf, telefone, endereco, data_nascimento, cargo } = req.body;
+    const { 
+      nome, 
+      sobrenome, 
+      cpf, 
+      telefone, 
+      data_nascimento, 
+      rua, 
+      bairro, 
+      cidade, 
+      nro_endereco, 
+      UF, 
+      cargo 
+    } = req.body;
 
-    // Monta o objeto de atualização
+     // **CORREÇÃO: Garantir que nro_endereco seja string**
+    const numeroEndereco = Array.isArray(nro_endereco) ? nro_endereco[0] : nro_endereco;
+
+    // Monta o objeto de atualização com TODAS as colunas
     const dadosAtualizacao = {
       nome,
+      sobrenome, // ← NOVA COLUNA
       cpf,
       telefone,
       data_nascimento,
+      rua,
+      bairro,    // ← NOVA COLUNA
+      cidade,
+      nro_endereco: numeroEndereco,
+      UF,
       cargo
     };
 
-    // Regras específicas para cada tipo de usuário:
-    // - Cliente pode atualizar endereço
-    // - Funcionário não tinha endereço antes, mas agora pode preencher
-    if (endereco !== undefined) {
-      dadosAtualizacao.endereco = endereco;
-    }
+    
 
     // Se uma nova imagem foi enviada, salva o nome do arquivo
     if (req.file) {
