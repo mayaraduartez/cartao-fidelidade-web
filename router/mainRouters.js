@@ -58,4 +58,24 @@ router.get('/premio', mainController.verificarPremio);
 router.post('/conceder-premio', mainController.concederPremio);
 router.post('/utilizar-premio/:id', mainController.utilizarPremio);
 
+// Cadastro de promoção (admin)
+router.get("/promocao", mainController.FormPromocao);
+router.post("/cadastrarPromocao", upload.single('foto'), mainController.cadastrarPromocao);
+
+
+// Listagem de promoções
+router.get("/listarPromocoes", mainController.listarPromocoes);
+router.get("/login/promocoes/buscar", mainController.buscarPromocao);
+
+// ✅ Edição, exclusão e estender
+router.get("/login/telaEditarPromocao/:id/editar", mainController.telaEditarPromocao);
+router.post("login/atualizarPromocao", upload.single('foto'), mainController.atualizarPromocao);
+
+router.get("/login/listarPromocoes/excluirPromocao/:id", mainController.excluirPromocao);
+
+router.post("/listarPromocoes/:id/buscar", mainController.buscarPromocao);
+
+
+
+
 module.exports = router;

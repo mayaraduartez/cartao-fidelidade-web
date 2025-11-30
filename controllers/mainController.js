@@ -7,6 +7,7 @@ const Usuario = require("../models/Usuario");
 //const Restaurante = require("../models/Restaurante");
 const Refeicao = require("../models/refeicoes");
 const Premio = require("../models/Premio");
+const Promocao = require("../models/Promocao");
 //const Funcionario = require("../models/Funcionario"); 
 const upload = require("../config/upload")
 const Grupo = require('../models/Grupo');
@@ -534,6 +535,231 @@ async function checarOuConcederPremio(username, manual = false) {
   };
 }
 
+// ========================
+// 📌 cadastrar promoção
+// ========================
+async function FormPromocao(req, res) {
+  try {
+    res.render("login/promocao"); 
+  } catch (error) {
+    console.error("Erro ao carregar o formulário de promoção:", error);
+    res.status(500).send("Erro ao carregar a página");
+  }
+}
+
+async function cadastrarPromocao(req, res) {
+  try {
+    const {
+      nome, 
+      descricao,
+      qtd_refeicao,
+      tipo_desconto,
+      valor,
+      data_inicio,
+      data_fim
+    } = req.body;
+
+    // CORREÇÃO: Verificação completa dos campos
+    if (!nome || !descricao || !tipo_desconto) {
+      return res.status(400).send("Preencha todos os campos obrigatórios!");
+    }
+
+    // Se uma nova imagem foi enviada, salva o nome do arquivo
+    const foto = req.file ? req.file.filename : null;
+
+    console.log('Arquivo recebido:', req.file);
+    console.log('Nome da imagem:', foto);
+
+    await Promocao.create({
+      nome,
+      descricao,
+      qtd_refeicao: qtd_refeicao || 0,
+      tipo_desconto,
+      valor: valor || 0,
+      data_inicio: data_inicio || new Date(),
+      data_fim: data_fim || null,
+      foto
+    });
+
+    res.redirect("/login/promocao"); 
+
+  } catch (error) {
+    console.error("Erro ao cadastrar promoção:", error);
+    res.status(500).send("Erro ao cadastrar promoção: " + error.message);
+  }
+}
+
+// LISTAR PROMOÇÕES
+// ========================
+async function listarPromocoes(req, res) {
+  try {
+    const promocoes = await Promocao.findAll({
+      order: [['id', 'DESC']]
+    });
+
+    res.render("login/listarPromocoes", { 
+      promocoes: promocoes 
+    });
+  } catch (error) {
+    console.error("Erro ao listar promoções:", error);
+    res.status(500).send("Erro ao carregar lista de promoções");
+  }
+}
+
+// BUSCAR PROMOÇÕES
+// ========================
+async function buscarPromocao(req, res) {
+  try {
+    const { id, nome } = req.query;
+
+    let whereClause = {};
+
+    if (nome && nome.trim() !== "") {
+      whereClause.nome = { [Sequelize.Op.like]: `%${nome}%` };
+    }
+
+    if (id && id.trim() !== "") {
+      whereClause.id = id; // busca exata por ID
+    }
+
+    const promocoes = await Promocao.findAll({
+      where: whereClause,
+      order: [['id', 'DESC']]
+    });
+
+    res.render("login/listarPromocoes", { 
+      promocoes,
+      filtros: { id, nome }  // retorna filtros para repopular inputs
+    });
+
+  } catch (error) {
+    console.error("Erro ao buscar promoções:", error);
+    res.status(500).send("Erro ao buscar promoções");
+  }
+}
+
+// EDITAR PROMOÇÃO
+// ========================
+async function telaEditarPromocao(req, res) {
+  try {
+    const { id } = req.params;   // pega o id da rota
+
+    if (!id || isNaN(id)) {
+      return res.status(400).send("ID inválido");
+    }
+
+    // busca a promoção pelo ID
+    const promocao = await Promocao.findOne({
+      where: { id: id }
+    });
+
+    if (!promocao) {
+      return res.status(404).send("Promoção não encontrada");
+    }
+
+    // renderiza a view de edição
+    res.render("login/telaEditarPromocao", { promocao });
+
+  } catch (error) {
+    console.error("Erro ao carregar promoção:", error);
+    res.status(500).send("Erro ao carregar promoção");
+  }
+}
+
+
+
+
+// atualizar promoção
+async function atualizarPromocao(req, res) {
+  try {
+    const { id } = req.body;
+
+    const {
+      nome,
+      descricao,
+      qtd_refeicao,
+      tipo_desconto,
+      valor,
+      data_inicio,
+      data_fim,
+    } = req.body;
+
+    // Se tiver upload de foto
+    const foto = req.file ? req.file.filename : null;
+
+    if (!id) {
+      return res.status(400).send("ID da promoção ausente para atualização.");
+    }
+
+    // Verifica se existe
+    const promocao = await Promocao.findByPk(id);
+    if (!promocao) {
+      return res.status(404).send("Promoção não encontrada.");
+    }
+
+    // Atualiza os campos
+    promocao.nome = nome;
+    promocao.descricao = descricao;
+    promocao.qtd_refeicao = qtd_refeicao;
+    promocao.tipo_desconto = tipo_desconto;
+    promocao.valor = valor;
+    promocao.data_inicio = data_inicio;
+    promocao.data_fim = data_fim;
+
+    if (foto) {
+      promocao.foto = foto;
+    }
+
+    // Salva no banco
+    await promocao.save();
+
+    res.status(200).send("Promoção atualizada com sucesso!");
+  } catch (error) {
+    console.error("Erro ao atualizar promoção:", error);
+    res.status(500).send("Erro ao atualizar promoção: " + error.message);
+  }
+}
+
+
+
+
+//excluir
+async function excluirPromocao(req, res) {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    if (isNaN(id)) {
+      return res.status(400).send("ID inválido");
+    }
+
+    const promocao = await Promocao.findByPk(id);
+    if (!promocao) {
+      return res.status(404).send("Promoção não encontrada");
+    }
+
+    // Se tiver imagem armazenada, remove do disco
+    if (promocao.foto) {
+      const fotoPath = path.join(__dirname, "../public/uploads", promocao.foto);
+
+      if (fs.existsSync(fotoPath)) {
+        fs.unlinkSync(fotoPath);
+      }
+    }
+
+    await promocao.destroy();
+
+    res.redirect("/login/listarPromocoes");
+
+  } catch (error) {
+    console.error("Erro ao excluir promoção:", error);
+    res.status(500).send("Erro ao excluir promoção: " + error.message);
+  }
+}
+
+      
+
+      
+
 async function tela_cadastra_funcionario(req, res) {
   try {
     // Consulta todos os grupos no banco de dados
@@ -632,5 +858,14 @@ module.exports = {
   salva_cadastra_funcionario,
   verificarPremio,
   concederPremio,
-  utilizarPremio
+  utilizarPremio,
+  //promoção
+  FormPromocao,
+  cadastrarPromocao,
+  listarPromocoes,
+  buscarPromocao,
+  atualizarPromocao,
+  telaEditarPromocao,
+  excluirPromocao
+  
 };
