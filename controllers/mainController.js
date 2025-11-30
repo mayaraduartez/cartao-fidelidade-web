@@ -12,6 +12,8 @@ const Promocao = require("../models/Promocao");
 const upload = require("../config/upload")
 const Grupo = require('../models/Grupo');
 
+
+
 // ------------------------
 // 🧩 FUNÇÕES DE VALIDAÇÃO
 // ------------------------
@@ -297,6 +299,21 @@ async function atualizarPerfil(req, res) {
   }
 }
 
+// FUNÇÃO: MOSTRAR TELA DE RECUPERAR SENHA
+async function recuperarSenhaForm(req, res) {
+  try {
+    res.render("login/recuperarSenha.ejs", {
+      titulo: "Recuperar Senha",
+      mensagem: "Digite seu e-mail para recuperar sua senha."
+    });
+  } catch (error) {
+    console.error("Erro ao abrir tela de recuperar senha:", error);
+    res.status(500).send("Erro ao carregar a tela de recuperação de senha.");
+  }
+}
+  
+
+
 async function listarClientes(req, res) {
   try {
     const clientes = await Usuario.findAll({
@@ -581,7 +598,7 @@ async function cadastrarPromocao(req, res) {
       foto
     });
 
-    res.redirect("/login/promocao"); 
+    res.redirect("/listarPromocoes"); 
 
   } catch (error) {
     console.error("Erro ao cadastrar promoção:", error);
@@ -713,7 +730,7 @@ async function atualizarPromocao(req, res) {
     // Salva no banco
     await promocao.save();
 
-    res.status(200).send("Promoção atualizada com sucesso!");
+    res.redirect("/listarPromocoes");
   } catch (error) {
     console.error("Erro ao atualizar promoção:", error);
     res.status(500).send("Erro ao atualizar promoção: " + error.message);
@@ -724,6 +741,7 @@ async function atualizarPromocao(req, res) {
 
 
 //excluir
+
 async function excluirPromocao(req, res) {
   try {
     const id = parseInt(req.params.id, 10);
@@ -737,18 +755,19 @@ async function excluirPromocao(req, res) {
       return res.status(404).send("Promoção não encontrada");
     }
 
-    // Se tiver imagem armazenada, remove do disco
+    // Remove imagem se existir
     if (promocao.foto) {
       const fotoPath = path.join(__dirname, "../public/uploads", promocao.foto);
-
       if (fs.existsSync(fotoPath)) {
         fs.unlinkSync(fotoPath);
       }
     }
 
+    // Remove do banco
     await promocao.destroy();
 
-    res.redirect("/login/listarPromocoes");
+    // Redireciona para lista de promoções
+    res.redirect("/listarPromocoes");
 
   } catch (error) {
     console.error("Erro ao excluir promoção:", error);
@@ -756,7 +775,6 @@ async function excluirPromocao(req, res) {
   }
 }
 
-      
 
       
 
@@ -859,6 +877,7 @@ module.exports = {
   verificarPremio,
   concederPremio,
   utilizarPremio,
+  recuperarSenhaForm,
   //promoção
   FormPromocao,
   cadastrarPromocao,

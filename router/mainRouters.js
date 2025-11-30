@@ -41,6 +41,7 @@ router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
 // Rotas de perfil
 router.get('/meuPerfil', mainController.MeuPerfil);
 router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
+//router.get("/recuperarSenha", loginController.recuperarSenhaForm);
 
 // Rota administrativa
 router.get("/admin/listarClientes", mainController.listarClientes);
@@ -67,13 +68,12 @@ router.post("/cadastrarPromocao", upload.single('foto'), mainController.cadastra
 router.get("/listarPromocoes", mainController.listarPromocoes);
 router.get("/login/promocoes/buscar", mainController.buscarPromocao);
 
-// ✅ Edição, exclusão e estender
+// ✅ Edição, exclusão de promoções
 router.get("/login/telaEditarPromocao/:id/editar", mainController.telaEditarPromocao);
-router.post("login/atualizarPromocao", upload.single('foto'), mainController.atualizarPromocao);
+// certo ✅
+router.post("/atualizarPromocao", upload.single('foto'), mainController.atualizarPromocao);
 
-router.get("/login/listarPromocoes/excluirPromocao/:id", mainController.excluirPromocao);
-
-router.post("/listarPromocoes/:id/buscar", mainController.buscarPromocao);
+router.post("/promocoes/excluir/:id", mainController.excluirPromocao);
 
 
 

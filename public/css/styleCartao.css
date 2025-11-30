@@ -1,0 +1,90 @@
+/* Fundo geral */
+body {
+  min-height: 100vh;
+  background: linear-gradient(-135deg, #ffe016, #f94904);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins-Regular', sans-serif;
+}
+
+/* Container do cartão */
+.card {
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  position: relative;
+}
+
+/* Título */
+.card h1 {
+  font-family: 'Poppins-Bold';
+  font-size: 28px;
+  color: #ff4500;
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 25px;
+}
+
+/* Grid dos quadradinhos */
+.punch-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Quadradinhos */
+.punch-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background-color: #fffaf0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.punch-box:hover {
+  background-color: #ffecc7;
+}
+
+.punch-box.marked {
+  background-color: #f94904;
+  color: #fff;
+}
+
+/* Emoji dentro do quadrado */
+.check-emoji {
+  font-size: 24px;
+}
+
+/* Flores decorativas */
+.decorative-flower {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  fill: #f94904;
+  opacity: 0.2;
+}
+
+.top-left {
+  top: 10px;
+  left: 10px;
+}
+
+.bottom-right {
+  bottom: 10px;
+  right: 10px;
+}

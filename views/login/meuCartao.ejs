@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<>
   <meta charset="UTF-8">
   <title>Meu Cartão - Cliente</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +7,25 @@
   <!-- Bootstrap 4.1.3 -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
     integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" href="/style/stylemeuCartao.css">
-  
+    <link rel="stylesheet" href="/css/styleCartao.css">
 </head>
 <body>
-  <div class="cartao-container">
-    <h1>Meu cartão</h1>
-    <h2>Junte 10 refeições e receba um almoço gratuito.</h2>
-    <div class="punch-grid">
-      <% for (let i = 0; i < 10; i++) { %>
+  <div class="card">
+  <h1>Cartão Fidelidade Digital</h1>
+<div class="card-header">
+    <h2>Ao realizar 10 refeições, ganhe um almoço grátis.</h2>
+  </div>
+
+  <!-- Quadrado grande -->
+  <div class="big-square">
+    <div class="punch-grid" id="punch-grid">
+    <% for (let i = 0; i < 10; i++) { %>
         <div class="punch-box <%= i < refeicoes.length ? '' : 'blank' %>">
           <%= i < refeicoes.length ? '✅' : '⬜' %>
         </div>
       <% } %>
-    </div>
   </div>
+</div>
 
   <!-- Botão condicional -->
   <div class="text-center mt-4">
@@ -38,7 +41,5 @@
       </button>
     <% } %>
   </div>
-
-  
 </body>
 </html>

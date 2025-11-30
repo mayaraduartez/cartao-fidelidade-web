@@ -1,0 +1,47 @@
+  body {
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #ff7f00, #ff4500); /* fundo laranja */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden; /* evita barra de rolagem com confetes */
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      color: #ff4500;
+      font-weight: bold;
+    }
+
+    .lead {
+      color: #333;
+    }
+
+    /* Confetes */
+    .confetti {
+      position: fixed;
+      top: -10px;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      opacity: 0.8;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0.9;
+      }
+    }
