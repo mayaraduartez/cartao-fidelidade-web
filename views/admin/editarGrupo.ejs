@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Editar Grupo</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="/css/style3.css" />
+  </head>
+  <body>
+    <div class="tela-funcionarios">
+      <div class="cabecalho-funcionarios">
+        <div class="logo-area">
+          <img src="/images/logoRes.png" alt="Logo" />
+        </div>
+        <h1 class="titulo-funcionarios">Editar Grupo</h1>
+      </div>
+
+      <div class="box-formulario">
+        <% if (typeof msg !== 'undefined' && msg) { %>
+        <div class="<%= msgType === 'success' ? 'msg-sucesso' : 'msg-erro' %>">
+          <%= msg %>
+        </div>
+        <% } %>
+
+        <form method="POST" action="/admin/grupos/editar/<%= grupo.id %>">
+          <div
+            class="wrap-input100 validate-input"
+            data-validate="Informe o nome do grupo"
+          >
+            <input
+              type="text"
+              name="nome"
+              class="input100"
+              placeholder="Nome do Grupo"
+              value="<%= grupo.nome %>"
+              required
+            />
+            <span class="focus-input100"></span>
+            <span class="symbol-input100">
+              <i class="fa fa-users" aria-hidden="true"></i>
+            </span>
+          </div>
+
+          <div
+            class="wrap-input100 validate-input"
+            data-validate="Informe o slug do grupo"
+          >
+            <input
+              type="text"
+              name="slug"
+              class="input100"
+              placeholder="Slug do Grupo"
+              value="<%= grupo.slug %>"
+              required
+            />
+            <span class="focus-input100"></span>
+            <span class="symbol-input100">
+              <i class="fa fa-link" aria-hidden="true"></i>
+            </span>
+          </div>
+
+          <div class="container-login100-form-btn">
+            <input
+              type="submit"
+              class="login100-form-btn"
+              value="Salvar Alterações"
+            />
+          </div>
+
+          <div class="text-center p-t-12">
+            <a class="btn-voltar1" href="/admin/listarGrupos"> Voltar </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

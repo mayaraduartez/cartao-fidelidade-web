@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>Cadastrar Grupo</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="icon" type="image/png" href="/images/icons/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
+    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
+    <link rel="stylesheet" type="text/css" href="/css/util.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style2.css" />
+
+  </head>
+  <body>
+    <div class="container-formulario">
+      <div class="formulario-wrapper">
+        <div class="formulario-logo js-tilt" data-tilt>
+          <img src="/images/logoRes.png" alt="Logo" />
+        </div>
+
+       <form class="login100-form validate-form" method="POST" action="/admin/cadastrarGrupo">
+          <!-- Mensagem de erro -->
+          <% if (typeof msg !== 'undefined' && msg) { %>
+            <% if (msgType === 'success') { %>
+              <div id="msg-sucesso"><%= msg %></div>
+            <% } else { %>
+              <div id="msg-erro"><%= msg %></div>
+            <% } %>
+          <% } %>
+
+          <span class="formulario-titulo"> Cadastro de Grupo </span>
+
+          <!-- Nome do grupo -->
+          <div class="campo-input validate-input" data-validate="Informe o nome do grupo">
+            <input
+              class="input-texto"
+              type="text"
+              name="nome"
+              placeholder="Nome do Grupo"
+              required
+            />
+            <span class="focus-input"></span>
+            <span class="icone-input">
+              <i class="fa fa-users" aria-hidden="true"></i>
+            </span>
+          </div>
+
+          <!-- Área do grupo -->
+          <div class="campo-input validate-input" data-validate="Informe a área do grupo">
+            <input
+              class="input-texto"
+              type="text"
+              name="area"
+              placeholder="Área do Grupo (ex: Marketing)"
+              required
+            />
+            <span class="focus-input"></span>
+            <span class="icone-input">
+              <i class="fa fa-sitemap" aria-hidden="true"></i>
+            </span>
+          </div>
+
+          <!-- Botão -->
+          <div class="container-btn-cadastro">
+            <input
+              type="submit"
+              class="btn-cadastro"
+              value="Cadastrar Grupo"
+            />
+          </div>
+
+          <div class="text-center p-t-12">
+            <a class="btn-voltar" href="/meuPerfil"> Voltar </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/vendor/bootstrap/js/popper.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/vendor/select2/select2.min.js"></script>
+    <script src="/vendor/tilt/tilt.jquery.min.js"></script>
+    <script>
+      $(".js-tilt").tilt({ scale: 1.1 });
+    </script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>Editar Funcionário</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/css/style2.css" />
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css" />
+  </head>
+  <body>
+    <!-- Container principal -->
+    <div class="container-formulario">
+      <!-- Wrapper do formulário -->
+      <div class="formulario-wrapper">
+        
+        <!-- Logo -->
+        <div class="formulario-logo">
+          <img src="/images/logoRes.png" alt="Logo" />
+        </div>
+
+        <!-- Título -->
+        <span class="formulario-titulo">Editar Funcionário</span>
+
+        <!-- Mensagem -->
+        <% if (msg) { %>
+          <div id="msg-sucesso"><%= msg %></div>
+        <% } %>
+
+        <!-- Formulário -->
+        <form action="/admin/funcionarios/editar/<%= funcionario.id %>" method="POST">
+            
+          <div class="campo-input">
+            <label>Foto (URL)</label>
+            <input type="file" name="foto" class="input-foto" />
+          </div>
+
+          <div class="campo-input">
+            <label>Nome</label>
+            <input type="text" name="nome" class="input-texto" value="<%= funcionario.nome %>" required />
+          </div>
+
+          <div class="campo-input">
+            <label>Sobrenome</label>
+            <input type="text" name="sobrenome" class="input-texto" value="<%= funcionario.sobrenome %>" required />
+          </div>
+
+          <div class="campo-input">
+            <label>Email</label>
+            <input type="email" name="email" class="input-texto" value="<%= funcionario.email %>" required />
+          </div>
+
+          <div class="campo-input">
+            <label>CPF</label>
+            <input type="text" name="cpf" class="input-texto" value="<%= funcionario.cpf %>" required />
+          </div>
+
+          <div class="campo-input">
+            <label>Data de Nascimento</label>
+            <input type="date" name="data_nascimento" class="input-texto" value="<%= funcionario.data_nascimento %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Telefone</label>
+            <input type="text" name="telefone" class="input-texto" value="<%= funcionario.telefone %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Rua</label>
+            <input type="text" name="rua" class="input-texto" value="<%= funcionario.rua %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Bairro</label>
+            <input type="text" name="bairro" class="input-texto" value="<%= funcionario.bairro %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Cidade</label>
+            <input type="text" name="cidade" class="input-texto" value="<%= funcionario.cidade %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Número</label>
+            <input type="text" name="nro_endereco" class="input-texto" value="<%= funcionario.nro_endereco %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>UF</label>
+            <input type="text" name="UF" class="input-texto" value="<%= funcionario.UF %>" />
+          </div>
+
+          <div class="campo-input">
+            <label>Grupo</label>
+            <select name="grupo" class="input-texto">
+              <% grupos.forEach(grupo => { %>
+                <option value="<%= grupo.id %>" <%= funcionario.GrupoId === grupo.id ? 'selected' : '' %>>
+                  <%= grupo.nome %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="campo-input">
+            <label>Senha (opcional)</label>
+            <input type="password" name="senha" class="input-texto" placeholder="Nova senha" />
+          </div>
+
+          <!-- Botões -->
+          <div class="container-btn-cadastro">
+            <button type="submit" class="btn-cadastro">Salvar Alterações</button>
+            <a href="/admin/listarFuncionarios" class="btn-voltar">Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+

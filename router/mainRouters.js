@@ -33,6 +33,10 @@ router.get("/admin/Cadastrarfuncionarios", mainController.tela_cadastra_funciona
 router.post("/admin/Cadastrarfuncionarios", mainController.salva_cadastra_funcionario
 );
 
+router.get('/admin/funcionarios/editar/:id', mainController.tela_editar_funcionario);
+router.post('/admin/funcionarios/editar/:id', mainController.editarFuncionario);
+router.post('/admin/funcionarios/excluir/:id', mainController.excluirFuncionario);
+
 
 // Listagem de funcionários
 router.get("/admin/listarFuncionarios", mainController.listarFuncionarios);
@@ -69,12 +73,35 @@ router.get("/login/promocoes/buscar", mainController.buscarPromocao);
 
 // ✅ Edição, exclusão e estender
 router.get("/login/telaEditarPromocao/:id/editar", mainController.telaEditarPromocao);
-router.post("login/atualizarPromocao", upload.single('foto'), mainController.atualizarPromocao);
+// certo ✅
+router.post("/atualizarPromocao", upload.single('foto'), mainController.atualizarPromocao);
 
-router.get("/login/listarPromocoes/excluirPromocao/:id", mainController.excluirPromocao);
+
+router.post("/promocoes/excluir/:id", mainController.excluirPromocao);
+
+
+
 
 router.post("/listarPromocoes/:id/buscar", mainController.buscarPromocao);
 
+// Grupos
+router.get("/admin/cadastrarGrupo", mainController.tela_cadastra_grupo
+);
+
+router.post("/admin/cadastrarGrupo", mainController.salva_cadastra_grupo
+);
+
+// Listar todos os grupos
+router.get("/admin/listarGrupos", mainController.listarGrupos);
+
+// Buscar grupos por nome
+router.get("/admin/grupos/buscar", mainController.buscarGrupo);
+
+// Excluir grupo
+router.post("/admin/grupos/excluir/:id", mainController.excluirGrupo);
+
+router.get("/admin/grupos/editar/:id", mainController.telaEditarGrupo);
+router.post("/admin/grupos/editar/:id", mainController.editarGrupo);
 
 
 

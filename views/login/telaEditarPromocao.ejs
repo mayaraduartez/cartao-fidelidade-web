@@ -23,7 +23,10 @@
       <div class="col-md-8">
         <h2 class="mb-4 text-center">Editar Promoção</h2>
         <form action="/atualizarPromocao" method="post" enctype="multipart/form-data">
-    
+          
+          <!-- Campo oculto para enviar o ID da promoção -->
+          <input type="hidden" name="id" value="<%= promocao.id %>">
+
           <div class="row">
             <!-- Coluna da foto -->
             <div class="col-md-4 text-center mb-4">
