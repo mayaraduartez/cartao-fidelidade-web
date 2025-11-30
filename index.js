@@ -20,10 +20,6 @@ const Token = require("./models/Token");
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);
 
-
-
-
-
 Grupo.belongsToMany(Permissao, { through: 'grupos_permissao' });
 Permissao.belongsToMany(Grupo, { through: 'grupos_permissao' });
 
@@ -40,12 +36,10 @@ Cartao_cliente.belongsTo(Promocao);
 Promocao.hasMany(Cartao_cliente);
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 //configuração dos arquivos de visão (VIEWS)
 app.set("view engine", "ejs");
-
-//configurar para receber dados por metodo post
-app.use(express.urlencoded({ extended: false }));
 
 //pasta de arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
@@ -58,11 +52,13 @@ app.use(
   })
 );
 
-//usuário e grupo
+// Inicializa Passport corretamente
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Usuário e grupo
 Usuario.belongsTo(Grupo, { foreignKey: 'GrupoId' });
 Grupo.hasMany(Usuario, { foreignKey: 'GrupoId' });
-
-app.use(passport.authenticate("session"));
 
 app.use("/", mainRouter);
 

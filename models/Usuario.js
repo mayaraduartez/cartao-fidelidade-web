@@ -14,31 +14,16 @@ const Usuario = sequelizeconnect.define(
       type: DataTypes.STRING,
     },
     cpf: {
-        type: DataTypes.STRING,
-        unique: true,
+      type: DataTypes.STRING,
+      unique: true,
     },
     data_nascimento: {
       type: DataTypes.DATEONLY,
     },
     telefone: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
-     rua: {
-  type: DataTypes.STRING,
-},
- bairro: {
-  type: DataTypes.STRING,
-},
-cidade: {
-  type: DataTypes.STRING,
-},
-nro_endereco: {
-  type: DataTypes.STRING,
-},
-UF: {
-  type: DataTypes.STRING,
-},
-  email: {
+    email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,

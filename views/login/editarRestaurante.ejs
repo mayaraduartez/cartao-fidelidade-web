@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Restaurante</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+</head>
+
+<body class="p-4">
+
+  <div class="container">
+    <h2 class="mb-4 text-center">Editar Restaurante</h2>
+
+    <form action="/restaurantes/<%= restaurante.id %>/editar" method="POST">
+
+      <div class="form-group">
+        <label>Nome da Unidade:</label>
+        <input type="text" name="nome" class="form-control" value="<%= restaurante.nome %>" required>
+      </div>
+
+      <div class="form-group">
+        <label>Endereço:</label>
+        <input type="text" name="endereco" class="form-control" value="<%= restaurante.endereco %>" required>
+      </div>
+
+      <button class="btn btn-primary btn-block">Salvar Alterações</button>
+      <a href="/login/telaRestaurante" class="btn btn-secondary btn-block mt-2">Cancelar</a>
+    </form>
+  </div>
+
+</body>
+</html>
