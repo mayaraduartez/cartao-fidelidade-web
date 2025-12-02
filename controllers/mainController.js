@@ -12,6 +12,7 @@ const Promocao = require("../models/Promocao");
 const upload = require("../config/upload")
 const Grupo = require('../models/Grupo');
 
+
 // ------------------------
 // 🧩 FUNÇÕES DE VALIDAÇÃO
 // ------------------------
@@ -32,6 +33,66 @@ function validarCPF(cpf) {
   if (resto === 10 || resto === 11) resto = 0;
   return resto === parseInt(cpf.charAt(10));
 }
+
+// 🍽️ CADASTRO REAL DE RESTAURANTE
+async function cadastrarRestaurante(req, res) {
+  try {
+    const {
+      nome,
+      categoria,
+      telefone,
+      email,
+      site,
+      endereco,
+      cidade,
+      estado,
+      abre,
+      fecha,
+      preco,
+      descricao
+    } = req.body;
+
+    const servicos = req.body.servicos || [];
+
+    let fotoPath = null;
+    if (req.file) {
+      fotoPath = `/uploads/${req.file.filename}`;
+    }
+
+    if (!nome || !categoria || !telefone || !endereco || !cidade || !estado || !abre || !fecha) {
+      return res.status(400).send("Preencha todos os campos obrigatórios.");
+    }
+
+    if (abre >= fecha) {
+      return res.status(400).send("Horário de fechamento deve ser após abertura.");
+    }
+
+    const novoRestaurante = await Restaurante.create({
+      nome,
+      categoria,
+      telefone,
+      email,
+      site,
+      endereco,
+      cidade,
+      estado,
+      horarioAbertura: abre,
+      horarioFechamento: fecha,
+      precoMedio: preco ? Number(preco) : null,
+      servicos: Array.isArray(servicos) ? servicos.join(",") : servicos,
+      descricao,
+      foto: fotoPath
+    });
+
+    // Retorna JSON de sucesso para o frontend
+    res.json({ sucesso: true, restaurante: novoRestaurante });
+
+  } catch (err) {
+    console.error("Erro ao cadastrar restaurante:", err);
+    res.status(500).json({ sucesso: false, erro: err.message });
+  }
+}
+
 
 // -----------------------------
 // 👨‍💼 FUNCIONÁRIOS
@@ -127,6 +188,34 @@ async function buscarFuncionario(req, res) {
   }
 }
 
+
+async function cadastrarUsuario(req, res) {
+  try {
+    const { nome, cpf, dataNasc, telefone, email, senha, confSenha } = req.body;
+
+    if (senha !== confSenha) {
+      return res.status(400).send("As senhas não conferem!");
+    }
+
+    await Usuario.create({
+      nome,
+      cpf,
+      dataNasc,
+      telefone,
+      email,
+      senha, // ← senha agora vai normal para o banco
+      foto: req.file ? req.file.filename : null
+    });
+
+    res.redirect("/login"); // pode alterar para a página que quiser
+  } catch (error) {
+    console.error("Erro ao cadastrar usuário:", error);
+    res.status(500).send("Erro ao cadastrar usuário");
+  }
+}
+module.exports = { cadastrarUsuario };
+
+
 // -----------------------------
 // 🍽️ RESTAURANTES
 // -----------------------------
@@ -156,6 +245,21 @@ async function listarRestaurantes(req, res) {
     res.status(500).send("Erro ao listar restaurantes");
   }
 }
+
+async function formEditarRestaurante(req, res) {
+  try {
+    const { id } = req.params;
+    const restaurante = await Restaurante.findByPk(id);
+
+    if (!restaurante) return res.status(404).send("Restaurante não encontrado");
+
+    res.render("login/editarRestaurante", { restaurante });
+  } catch (error) {
+    console.error("Erro ao abrir formulário de edição:", error);
+    res.status(500).send("Erro ao carregar página de edição");
+  }
+}
+
 
 async function editarRestaurante(req, res) {
   try {
@@ -849,6 +953,7 @@ module.exports = {
   excluirRestaurante,
 
   // perfis e refeições
+
   MeuPerfil,
   atualizarPerfil,
   cadastrarRefeicao,
@@ -861,6 +966,7 @@ module.exports = {
   verificarPremio,
   concederPremio,
   utilizarPremio,
+  formEditarRestaurante,
   //promoção
   FormPromocao,
   cadastrarPromocao,

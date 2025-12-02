@@ -23,19 +23,20 @@ const Usuario = sequelizeconnect.define(
     },
     cpf: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     data_nascimento: {
       type: DataTypes.DATE,
       allowNull: false
     },
     telefone: {
-      type: DataTypes.STRING,
-      allowNull: false
+      type: DataTypes.STRING
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     senha: {
       type: DataTypes.STRING,

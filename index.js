@@ -5,8 +5,6 @@ const port = process.env.PORT || 3000;
 const session = require("express-session");
 const passport = require("passport");
 
-
-
 // Importa TODOS os models e conexão automaticamente
 const db = require("./models");
 
@@ -59,12 +57,13 @@ Grupo.hasMany(Usuario, { foreignKey: "GrupoId" });
 // =============================
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
 
-
-// CONFIGURAR EJS AQUI!!!
+// Configuração do EJS
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// Pasta de arquivos estáticos
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
   session({
@@ -74,7 +73,9 @@ app.use(
   })
 );
 
-app.use(passport.authenticate("session"));
+// Inicializa Passport corretamente
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Rotas
 const mainRouter = require("./router/mainRouters");
