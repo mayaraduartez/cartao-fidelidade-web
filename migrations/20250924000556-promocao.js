@@ -9,6 +9,7 @@ module.exports = {
         primaryKey: true,
         allowNull: false,
       },
+      foto: Sequelize.STRING,
       nome: {type: Sequelize.STRING, allowNull: false}, 
       descricao: { type: Sequelize.STRING},
       qtd_refeicao: { type: Sequelize.INTEGER},

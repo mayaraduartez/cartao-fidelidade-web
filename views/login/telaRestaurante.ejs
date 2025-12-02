@@ -5,20 +5,8 @@
   <meta charset="UTF-8">
   <title>Unidades - Sabor Caseiro</title>
 
-  <!-- Bootstrap 4.1.3 -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-    integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-    crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-    integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-    crossorigin="anonymous"></script>
-
-  <!-- Estilos personalizados -->
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="/style/style2.css">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Playfair+Display&display=swap" rel="stylesheet">
 </head>
@@ -31,40 +19,68 @@
     </div>
 
     <div class="row">
-      <!-- Coluna esquerda -->
+      <!-- COLUNA ESQUERDA - Lista e Ações -->
       <div class="col-md-6 mb-4">
         <div class="p-3 h-100">
           <h2 class="h5">Unidades Atuais</h2>
-          <ul id="unitList" class="list-group mb-3">
-            <% restaurantes.forEach(rest=> { %>
-              <li class="list-group-item">📍 <%= rest.endereco %> - <%= rest.nome %>
+
+          <ul class="list-group mb-3">
+            <% restaurantes.forEach(rest => { %>
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                📍 <%= rest.endereco %> - <%= rest.nome %>
+                <div>
+                  <!-- Botão Editar: abre modal -->
+                  <button class="btn btn-warning btn-sm mr-1" data-toggle="modal" data-target="#editarModal<%= rest.id %>">Editar</button>
+
+                  <!-- Botão Excluir: envia POST -->
+                  <form action="/restaurantes/<%= rest.id %>/excluir" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                  </form>
+                </div>
               </li>
-              <% }) %>
+
+              <!-- Modal de edição -->
+              <div class="modal fade" id="editarModal<%= rest.id %>" tabindex="-1" role="dialog" aria-labelledby="editarModalLabel<%= rest.id %>" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <form action="/restaurantes/<%= rest.id %>/editar" method="POST">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="editarModalLabel<%= rest.id %>">Editar Restaurante</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="form-group">
+                          <label for="nome<%= rest.id %>">Nome:</label>
+                          <input type="text" class="form-control" id="nome<%= rest.id %>" name="nome" value="<%= rest.nome %>" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="endereco<%= rest.id %>">Endereço:</label>
+                          <input type="text" class="form-control" id="endereco<%= rest.id %>" name="endereco" value="<%= rest.endereco %>" required>
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-warning">Salvar Alterações</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
           </ul>
 
-          <select id="unitSelect" class="custom-select mb-3">
-            <% restaurantes.forEach((rest, index)=> { %>
-              <option value="<%= index %>">
-                <%= rest.endereco %> - <%= rest.nome %>
-              </option>
-              <% }) %>
-          </select>
-
-
-          <div class="d-flex">
-            <button class="btn btn-warning w-50 mr-2" disabled>Editar</button>
-            <button class="btn btn-danger w-50" disabled>Excluir</button>
-          </div>
+          <!-- Link para lista de clientes -->
+          <a href="/admin/listarClientes" class="btn btn-info btn-block mt-2">Ver lista de clientes</a>
         </div>
       </div>
 
-      <!-- Coluna direita -->
+      <!-- COLUNA DIREITA - Cadastro -->
       <div class="col-md-6 mb-4">
         <div class="p-3 h-100">
           <h2 class="h5">Cadastrar Nova Unidade</h2>
-
           <form action="/restaurantes" method="POST">
-
             <div class="form-group">
               <label for="nome">Nome da Unidade:</label>
               <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Unidade Leste" required>
@@ -72,18 +88,19 @@
 
             <div class="form-group">
               <label for="endereco">Endereço:</label>
-              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999"
-                required>
+              <input type="text" id="endereco" name="endereco" class="form-control" placeholder="Ex: Rua Tal, 999" required>
             </div>
 
             <button type="submit" class="btn btn-success btn-block">Cadastrar Unidade</button>
-            <a href="/admin/listarClientes">Ver lista de clientes</a>
-
           </form>
         </div>
       </div>
     </div>
   </div>
-</body>
 
+  <!-- Scripts Bootstrap -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
 </html>

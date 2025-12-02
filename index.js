@@ -2,21 +2,29 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 3000;
-var session = require("express-session");
-var passport = require("passport"); 
+const session = require("express-session");
+const passport = require("passport");
 
-const mainRouter = require("./router/mainRouters");
+// Importa TODOS os models e conexão automaticamente
+const db = require("./models");
 
-const Usuario = require("./models/Usuario");
-const Cartao_cliente = require("./models/Cartao_cliente");
-const Promocao = require("./models/Promocao");
-const Restaurante = require("./models/Restaurante");
-const Unid_Restaurante = require("./models/Unid_Restaurante");
-const Permissao = require("./models/Permissao");
-const Grupo = require("./models/Grupo");
-const Token = require("./models/Token");
+// Models individuais
+const { 
+  Usuario, 
+  Cartao_cliente, 
+  Promocao, 
+  Restaurante, 
+  Unid_Restaurante, 
+  Permissao, 
+  Grupo, 
+  Token 
+} = db;
 
-// Define as relações entre os modelos
+// =============================
+// ASSOCIAÇÕES ENTRE MODELS
+// =============================
+
+// Token ↔ Usuario
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);
 
@@ -34,21 +42,29 @@ Promocao.belongsToMany(Unid_Restaurante, { through: 'promo_unidade' });
 Cartao_cliente.belongsTo(Usuario);
 Usuario.hasMany(Cartao_cliente);
 
+// Unidade ↔ Restaurante (1:N)
 Unid_Restaurante.belongsTo(Restaurante);
 Restaurante.hasMany(Unid_Restaurante);
 
+// Cartão ↔ Promoção
 Cartao_cliente.belongsTo(Promocao);
 Promocao.hasMany(Cartao_cliente);
 
+// Usuario ↔ Grupo
+Usuario.belongsTo(Grupo, { foreignKey: "GrupoId" });
+Grupo.hasMany(Usuario, { foreignKey: "GrupoId" });
+
+// =============================
+// Middleware Express
+// =============================
 app.use(express.json());
-
-//configuração dos arquivos de visão (VIEWS)
-app.set("view engine", "ejs");
-
-//configurar para receber dados por metodo post
 app.use(express.urlencoded({ extended: false }));
 
-//pasta de arquivos estáticos
+// Configuração do EJS
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+// Pasta de arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(
@@ -59,24 +75,24 @@ app.use(
   })
 );
 
-app.use(passport.authenticate("session"));
+// Inicializa Passport corretamente
+app.use(passport.initialize());
+app.use(passport.session());
 
+// Rotas
+const mainRouter = require("./router/mainRouters");
 app.use("/", mainRouter);
 
-const sequelizeconnect = require("./config/connection");
+// =============================
+// TESTE DE CONEXÃO
+// =============================
+db.sequelize.authenticate()
+  .then(() => console.log("🔥 Conectado ao PostgreSQL via config.json!"))
+  .catch(err => console.error("❌ Erro ao conectar no banco:", err));
 
-sequelizeconnect.sync()
-  .then(() => {
-    console.log("Modelos sincronizados com o banco!");
-    app.listen(port, function () {
-      console.log("Servidor funcionando na porta: " + port);
-    });
-  })
-  .catch((err) => {
-    console.error("Erro ao sincronizar modelos:", err);
-  });
-
-
-app.listen(port, function () {
+// =============================
+// Start server
+// =============================
+app.listen(port, () => {
   console.log("Servidor funcionando na porta: " + port);
 });

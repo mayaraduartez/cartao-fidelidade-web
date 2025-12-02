@@ -24,7 +24,11 @@ const Promocao = sequelizeconnect.define(
     },
     data_fim: {
         type: DataTypes.DATEONLY,
-    }
+    },
+    foto: {
+    type: DataTypes.STRING,  
+    allowNull: true          
+  }
   },
   {
     timestamps: false,
