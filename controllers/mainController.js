@@ -35,6 +35,78 @@ function validarCPF(cpf) {
   return resto === parseInt(cpf.charAt(10));
 }
 
+//tela home 
+
+async function home(req, res) {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.redirect("/login");
+    }
+
+    const usuario = await Usuario.findByPk(req.user.id);
+
+    if (!usuario) {
+      return res.status(404).send("Usuário não encontrado");
+    }
+
+    res.render("login/home", {
+      username: usuario.email || usuario.cpf,
+      role: usuario.cargo || "cliente",
+      user: usuario
+    });
+
+  } catch (error) {
+    console.error("Erro ao carregar home:", error);
+    res.status(500).send("Erro ao carregar página inicial");
+  }
+}
+
+
+//Tela promoção do dia
+async function telaPromocaoDia(req, res) {
+  try {
+    if (!req.user || !req.user.id) {
+      return res.redirect("/login");
+    }
+
+    const usuario = await Usuario.findByPk(req.user.id);
+
+    if (!usuario) {
+      return res.status(404).send("Usuário não encontrado");
+    }
+
+    // >>> AJUSTE CRÍTICO <<<
+    // Normaliza cargo para evitar "Cliente", "cliente ", null, etc.
+    const cargo = (usuario.cargo || "cliente").toLowerCase().trim();
+
+    //Somente cliente pode ver
+    if (cargo !== "cliente") {
+      return res.redirect("/home");
+    }
+
+    // Buscar promoções ativas
+    const promocoes = await Promocao.findAll({
+      where: {
+        data_inicio: { [Op.lte]: new Date() },
+        data_fim: { [Op.or]: [{ [Op.gte]: new Date() }, null] }
+      }
+    });
+
+    res.render("login/promoDoDia", {
+      username: usuario.email || usuario.cpf,
+      role: cargo,
+      promocoes
+    });
+
+  } catch (error) {
+    console.error("Erro ao carregar promoção do dia:", error);
+    res.status(500).send("Erro ao carregar promoção do dia");
+  }
+}
+
+
+
+
 // -----------------------------
 // 👨‍💼 FUNCIONÁRIOS
 // -----------------------------
@@ -111,23 +183,149 @@ async function abreCadastrarRestaurante(req, res) {
 
 
 async function buscarFuncionario(req, res) {
-  const { nome, id } = req.query;
+  const { nome, id, grupo } = req.query;
+
   let where = {};
-  if (nome) where.nome = { [Op.iLike]: `%${nome}%` };
-  if (id) where.id = id;
+  let include = [];
+
+  // Filtro por nome
+  if (nome) {
+    where.nome = { [Op.iLike]: `%${nome}%` };
+  }
+
+  // Filtro por id
+  if (id) {
+    where.id = id;
+  }
+
+  // Filtro por grupo (associação)
+  if (grupo) {
+    include.push({
+      model: Grupo,
+      required: true,
+      where: {
+        nome: { [Op.iLike]: `%${grupo}%` }
+      }
+    });
+  } else {
+    // Mesmo sem filtro, incluir Grupo para exibir na tabela
+    include.push({
+      model: Grupo,
+      required: false
+    });
+  }
 
   try {
     const funcionarios =
-      Object.keys(where).length > 0
-        ? await Usuario.findAll({ where })
-        : await Usuario.findAll();
+      Object.keys(where).length > 0 || grupo
+        ? await Usuario.findAll({ where, include })
+        : await Usuario.findAll({ include });
 
-    res.render("admin/listarFuncionarios", { funcionarios, nome, id });
+    res.render("admin/listarFuncionarios", { funcionarios, nome, id, grupo });
+
   } catch (error) {
     console.error("Erro ao buscar funcionário:", error);
     res.status(500).send("Erro ao buscar funcionário.");
   }
 }
+
+
+const tela_editar_funcionario = async (req, res) => {
+  try {
+    const funcionario = await Usuario.findByPk(req.params.id);
+    const grupos = await Grupo.findAll();
+
+    if (!funcionario) {
+      return res.status(404).send("Funcionário não encontrado");
+    }
+
+    res.render('admin/editarFuncionario', { funcionario, grupos, msg: null });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erro ao carregar funcionário");
+  }
+};
+
+const editarFuncionario = async (req, res) => {
+  const { id } = req.params;
+  const {
+    foto,
+    nome,
+    sobrenome,
+    email,
+    cpf,
+    data_nascimento,
+    telefone,
+    rua,
+    bairro,
+    cidade,
+    nro_endereco,
+    UF,
+    grupo,
+    admin,
+    senha
+  } = req.body;
+
+  try {
+    // Busca o funcionário pelo ID
+    const funcionario = await Usuario.findByPk(id);
+    if (!funcionario) return res.status(404).send('Funcionário não encontrado');
+
+    // Atualiza os campos
+    funcionario.foto = foto;
+    funcionario.nome = nome;
+    funcionario.sobrenome = sobrenome;
+    funcionario.email = email;
+    funcionario.cpf = cpf;
+    funcionario.data_nascimento = data_nascimento;
+    funcionario.telefone = telefone;
+    funcionario.rua = rua;
+    funcionario.bairro = bairro;
+    funcionario.cidade = cidade;
+    funcionario.nro_endereco = nro_endereco;
+    funcionario.UF = UF;
+    funcionario.GrupoId = grupo;
+    funcionario.admin = admin === 'on';
+
+    // Atualiza a senha somente se preenchida
+    if (senha && senha.trim() !== '') {
+      funcionario.senha = await bcrypt.hash(senha, 10);
+    }
+
+    await funcionario.save();
+
+    // Redireciona para a lista de funcionários
+    res.redirect('/admin/listarFuncionarios');
+
+  } catch (error) {
+    console.error('Erro ao editar funcionário:', error);
+    res.status(500).send('Erro interno ao editar funcionário');
+  }
+};
+
+ const excluirFuncionario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Tenta encontrar o funcionário
+    const funcionario = await Usuario.findByPk(id);
+
+    if (!funcionario) {
+      return res.status(404).send('Funcionário não encontrado');
+    }
+
+    // Deleta o funcionário
+    await funcionario.destroy();
+
+    // Redireciona de volta para a lista de funcionários
+    res.redirect('/admin/listarFuncionarios');
+  } catch (error) {
+    console.error('Erro ao excluir funcionário:', error);
+    res.status(500).send('Erro ao excluir funcionário');
+  }
+};
+
 
 // -----------------------------
 // 🍽️ RESTAURANTES
@@ -415,6 +613,7 @@ async function minhasRefeicoes(req, res) {
 async function verificarPremio(req, res) {
   try {
     const username = req.query.user;
+    const role = req.session.role || "cliente"; // 👈 PEGAR DA SESSÃO se for cliente não ve o botão utilizar premio
     if (!username) return res.status(400).send("Usuário não especificado");
 
     const infoPremio = await obterInfoPremio(username);
@@ -422,6 +621,7 @@ async function verificarPremio(req, res) {
     res.render("login/telaPremio", {
       username,
       ...infoPremio,
+      role
     });
   } catch (error) {
     console.error("Erro ao verificar prêmio:", error);
@@ -776,8 +976,13 @@ async function excluirPromocao(req, res) {
 }
 
 
-      
+// -----------------------------
+// 🚀 FUNÇÕES YGOR
+// -----------------------------   
 
+
+
+      
 async function tela_cadastra_funcionario(req, res) {
   try {
     // Consulta todos os grupos no banco de dados
@@ -794,6 +999,7 @@ salva_cadastra_funcionario
 async function salva_cadastra_funcionario(req, res) {
   const { nome, sobrenome, email, cpf, data_nasc, telefone, senha, admin, grupo } = req.body;
 
+  // Verifica campos obrigatórios
   if (!nome || !sobrenome || !email || !senha || !cpf || !data_nasc || !telefone) {
     const grupos = await Grupo.findAll();
     return res.render("admin/cadastrarFuncionario", {
@@ -803,6 +1009,7 @@ async function salva_cadastra_funcionario(req, res) {
     });
   }
 
+  // Valida CPF
   if (!validarCPF(cpf)) {
     const grupos = await Grupo.findAll();
     return res.render("admin/cadastrarFuncionario", {
@@ -813,9 +1020,10 @@ async function salva_cadastra_funcionario(req, res) {
   }
 
   try {
-    const cpfExiste = await Usuario.findOne({ where: { cpf } });
     const grupos = await Grupo.findAll();
 
+    // Verifica se CPF já existe
+    const cpfExiste = await Usuario.findOne({ where: { cpf } });
     if (cpfExiste) {
       return res.render("admin/cadastrarFuncionario", {
         msg: "Este CPF já está cadastrado!",
@@ -824,38 +1032,223 @@ async function salva_cadastra_funcionario(req, res) {
       });
     }
 
+    // Verifica se e-mail já existe
+    const emailExiste = await Usuario.findOne({ where: { email } });
+    if (emailExiste) {
+      return res.render("admin/cadastrarFuncionario", {
+        msg: "Este e-mail já está cadastrado!",
+        msgType: "warning",
+        grupos
+      });
+    }
+
+    // Criptografa senha
     const hash = await bcrypt.hash(senha, 10);
 
+    // Cria usuário
     await Usuario.create({
       nome,
       sobrenome,
       email,
       cpf,
-      data_nasc,
+      data_nascimento: data_nasc,
       telefone,
       senha: hash,
       admin: admin === "on",
       GrupoId: grupo
     });
 
-    res.render("admin/cadastrarFuncionario", {
+    return res.render("admin/cadastrarFuncionario", {
       msg: "Funcionário cadastrado com sucesso!",
       msgType: "success",
       grupos
     });
   } catch (error) {
     console.error("Erro ao cadastrar funcionário:", error);
-    res.status(500).send("Erro interno ao cadastrar funcionário.");
+    const grupos = await Grupo.findAll();
+
+    // Trata erro de unicidade do Sequelize
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res.render("admin/cadastrarFuncionario", {
+        msg: "E-mail ou CPF já cadastrado!",
+        msgType: "error",
+        grupos
+      });
+    }
+
+    // Erro genérico
+    return res.render("admin/cadastrarFuncionario", {
+      msg: "Erro interno ao cadastrar funcionário.",
+      msgType: "error",
+      grupos
+    });
   }
 }
+
+
+// Grupos
+
+// Tela de cadastro de grupo
+async function tela_cadastra_grupo(req, res) {
+  try {
+    const grupos = await Grupo.findAll();
+    res.render("admin/cadastrarGrupo", { grupos, msg: null, msgType: null });
+  } catch (error) {
+    console.error("Erro ao carregar tela de cadastro de grupo:", error);
+    res.render("admin/cadastrarGrupo", { grupos: [], msg: "Erro ao carregar página", msgType: "error" });
+  }
+}
+
+// Cadastra Grupo
+async function salva_cadastra_grupo(req, res) {
+  const { nome, area } = req.body;
+
+  if (!nome || !area) {
+    const grupos = await Grupo.findAll();
+    return res.render("admin/cadastrarGrupo", {
+      grupos,
+      msg: "Preencha todos os campos",
+      msgType: "error"
+    });
+  }
+
+  try {
+    await Grupo.create({
+      nome,
+      slug: area.toLowerCase().replace(/\s+/g, "-")
+    });
+
+    res.render("admin/cadastrarGrupo", {
+      grupos: [],
+      msg: "Grupo cadastrado com sucesso!",
+      msgType: "success"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.render("admin/cadastrarGrupo", {
+      grupos: [],
+      msg: "Erro ao cadastrar grupo",
+      msgType: "error"
+    });
+  }
+}
+
+
+async function listarGrupos(req, res) {
+  try {
+    const grupos = await Grupo.findAll({ order: [['id', 'ASC']] });
+    res.render("admin/listarGrupos", { grupos });
+  } catch (error) {
+    console.error("Erro ao listar grupos:", error);
+    res.status(500).send("Erro ao listar grupos");
+  }
+}
+
+async function buscarGrupo(req, res) {
+  const { id, nome } = req.query;
+  let where = {};
+
+  if (id) where.id = id;
+  if (nome) where.nome = { [Op.iLike]: `%${nome}%` };
+
+  try {
+    const grupos =
+      Object.keys(where).length > 0
+        ? await Grupo.findAll({ where, order: [['id', 'ASC']] })
+        : await Grupo.findAll({ order: [['id', 'ASC']] });
+
+    res.render("admin/listarGrupos", { grupos, id, nome });
+  } catch (error) {
+    console.error("Erro ao buscar grupos:", error);
+    res.status(500).send("Erro ao buscar grupos");
+  }
+}
+
+async function excluirGrupo(req, res) {
+  const { id } = req.params;
+
+  try {
+    await Grupo.destroy({ where: { id } });
+    // Mensagem de sucesso
+    res.render("admin/listarGrupos", {
+      grupos: await Grupo.findAll(), // buscar os grupos atualizados
+      msg: "Grupo excluído com sucesso!",
+      msgType: "success"
+    });
+  } catch (error) {
+    console.error("Erro ao excluir grupo:", error);
+
+    let mensagem = "Erro ao excluir grupo";
+
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      mensagem = "Não é possível excluir este grupo pois existem usuários associados a ele.";
+    }
+
+    res.render("admin/listarGrupos", {
+      grupos: await Grupo.findAll(), // manter a lista atualizada
+      msg: mensagem,
+      msgType: "error"
+    });
+  }
+}
+
+
+async function telaEditarGrupo(req, res) {
+  const { id } = req.params;
+
+  try {
+    const grupo = await Grupo.findByPk(id);
+    if (!grupo) return res.redirect("/admin/listarGrupos");
+
+    res.render("admin/editarGrupo", { grupo });
+  } catch (error) {
+    console.error("Erro ao abrir tela de edição do grupo:", error);
+    res.status(500).send("Erro interno");
+  }
+}
+
+async function editarGrupo(req, res) {
+  const { id } = req.params;
+  const { nome, slug } = req.body; // pegar também o slug
+
+  try {
+    if (!nome || nome.trim() === "" || !slug || slug.trim() === "") {
+      const grupo = await Grupo.findByPk(id);
+      return res.render("admin/editarGrupo", {
+        grupo,
+        msg: "O nome e o slug do grupo não podem estar vazios!",
+        msgType: "error"
+      });
+    }
+
+    // Atualizar nome e slug
+    await Grupo.update({ nome, slug }, { where: { id } });
+    res.redirect("/admin/listarGrupos");
+  } catch (error) {
+    console.error("Erro ao editar grupo:", error);
+    res.status(500).send("Erro interno");
+  }
+}
+
+
 // -----------------------------
 // 🚀 EXPORTA TUDO
 // -----------------------------
 
 module.exports = {
-  // funcionários
+   // funcionários
   listarFuncionarios,
   buscarFuncionario,
+  excluirFuncionario,
+  editarFuncionario,
+  tela_editar_funcionario,
+
+  //tela de inicio
+  home,
+
+  //tela promoção do dia
+  telaPromocaoDia,
 
   // restaurantes
   abreCadastrarRestaurante,
@@ -878,6 +1271,7 @@ module.exports = {
   concederPremio,
   utilizarPremio,
   recuperarSenhaForm,
+
   //promoção
   FormPromocao,
   cadastrarPromocao,
@@ -885,6 +1279,15 @@ module.exports = {
   buscarPromocao,
   atualizarPromocao,
   telaEditarPromocao,
-  excluirPromocao
+  excluirPromocao,
+
+  //Grupos
+  tela_cadastra_grupo,
+  salva_cadastra_grupo,
+  listarGrupos,
+  excluirGrupo,
+  buscarGrupo,
+  telaEditarGrupo,
+  editarGrupo,
   
 };

@@ -262,3 +262,91 @@ html, body {
   background-color: #333;
 }
 
+/* Botões de ação na tabela */
+.table .btn-acao {
+  padding: 4px 10px;              
+  font-size: 12px;               
+  border-radius: 6px;            
+  font-family: 'Montserrat-Bold';
+  text-transform: uppercase;
+  margin: 7px;                   
+}
+
+/* Botão Editar */
+.table .btn-editar {
+  background-color: #f94904;       
+  color: #fff;
+  border: none;
+  text-decoration: none;
+
+}
+
+.table .btn-editar:hover {
+  background-color: #333;         
+  color: #fff;
+}
+
+/* Botão Excluir */
+.table .btn-excluir {
+  background-color: #c80000;      
+  color: #fff;
+  border: none;
+}
+
+.table .btn-excluir:hover {
+  background-color: #900;         
+  color: #fff;
+}
+
+.text-center {
+  margin-top: 20px;
+  display: flex;             
+  justify-content: flex-end; 
+  padding-top: 12px;         
+  width: 100%;               
+}
+
+.btn-voltar {
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #f94904; 
+  color: #fff;
+  text-decoration: none;
+  border-radius: 25px;
+  font-family: 'Montserrat-Bold', sans-serif;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.btn-voltar:hover {
+  background-color: #333; /* efeito hover escuro */
+}
+
+/* mensagem de erro */
+.msg-erro {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* mensagem de sucesso */
+.msg-sucesso {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+
+
+

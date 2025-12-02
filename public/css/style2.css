@@ -483,3 +483,185 @@ iframe {
   font-weight: bold;
   text-align: center;
 }
+
+
+/* Container principal */
+.container-formulario {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(-135deg, #ffe016, #f94904); /* fundo laranja style2 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+}
+
+/* Wrapper do formulário */
+.formulario-wrapper {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;           
+}
+
+/* Logo */
+.formulario-logo img {
+  width: 120px;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+/* Título */
+.formulario-titulo {
+  font-family: 'Poppins-Bold';
+  font-size: 26px;
+  color: #f94904;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Campos */
+.campo-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo-input label {
+  font-family: 'Poppins-Medium';
+  font-size: 14px;
+  color: #333;
+}
+
+/* Inputs estilo do style3 */
+.input-texto {
+  width: 100%;
+  height: 45px;
+  border-radius: 25px;
+  padding: 0 20px;
+  background-color: #e6e6e6;
+  border: none;
+  font-size: 15px;
+  font-family: 'Poppins-Medium';
+  color: #333;
+}
+
+.input-texto:focus {
+  outline: none;
+  box-shadow: 0 0 8px rgba(249, 73, 4, 0.6);
+}
+
+/* Botões */
+.container-btn-cadastro {
+  display: flex;
+  justify-content: flex-end;   
+  gap: 15px;                  
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Botão Cadastrar */
+.btn-cadastro {
+  background-color: #f94904;  
+  color: #fff;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-family: 'Montserrat-Bold';
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-cadastro:hover {
+  background-color: #333;      
+}
+/* Botão Voltar */
+.btn-voltar {
+  background-color: #999;      
+  color: #fff;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-family: 'Montserrat-Bold';
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.3s ease;
+}
+.btn-voltar:hover {
+  background-color: #4f4e4e;
+}
+
+.text-center.p-t-12 {
+  display: flex;
+  justify-content: flex-end;  
+  margin-top: 10px;
+}
+
+
+/* Input de upload da foto */
+.input-foto {
+  width: 150px;              
+  height: 40px;            
+  border-radius: 10px;    
+  overflow: hidden;          
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+/* Input de upload da foto */
+.input-foto {
+  width: 100px;             
+  height: 35px;         
+  border-radius: 8px;       
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* Botão interno do input file */
+.input-foto::-webkit-file-upload-button {
+  background-color: #f94904;  
+  color: #fff;               
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: 'Montserrat-Bold';
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.input-foto::-webkit-file-upload-button:hover {
+  background-color: #333;     
+}
+
+.container-formulario {
+  display: flex;
+  justify-content: center;   
+  align-items: center;       
+  text-align: center;       
+}
+
+.foto-atual-container {
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  margin-bottom: 15px;    /* espaço entre a foto e o input */
+}
+
+.foto-atual {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;      /* deixa redonda */
+  object-fit: cover;       /* mantém proporção da imagem */
+  border: 2px solid #ccc;  /* opcional, borda suave */
+}
+
+

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Sistema Fidelidade</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/style4.css">
+
+</head>
+<body>
+
+<!-- ⭐ NAVBAR FIXA -->
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container">
+
+    <!-- LOGO -->
+    <a class="navbar-brand" href="/home">
+      <!-- Troque a imagem abaixo pela sua logo -->
+      <img src="/images/logoRes.png" alt="Logo do Sistema">
+      
+    </a>
+
+    <span class="nav-text">Cartão Fidelidade</span>
+
+    <!-- Botão mobile -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSite">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSite">
+
+      <ul class="navbar-nav">
+
+        <!-- PERFIL DO USUÁRIO -->
+        <li class="nav-item mr-3">
+          <span class="nav-text"><%= username %></span>
+        </li>
+
+        <!-- BOTÃO LOGOUT -->
+        <li class="nav-item">
+          <a href="/logout" class="btn btn-logout">Sair</a>
+        </li>
+
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<!-- ⭐ CONTEÚDO PRINCIPAL -->
+<div class="home-container">
+
+  <h1 class="titulo-home">Bem-vindo ao Restaurante Sabor Caseiro!</h1>
+  <p class="subtitulo-home">
+     <strong><%= role.toUpperCase() %></strong>
+  </p>
+
+  <div class="row">
+
+    <!-- ⭐ CLIENTE -->
+    <% if (role === "cliente") { %>
+
+      <div class="col-md-4 mb-4">
+        <a href="/minhasRefeicoes?user=<%= username %>" class="card-link">
+          <div class="card-menu-home">
+            <h4>Meu Cartão</h4>
+            <p>Veja suas refeições e prêmios.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/meuPerfil" class="card-link">
+          <div class="card-menu-home">
+            <h4>Meu Perfil</h4>
+            <p>Alterar dados e senha.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/promoDoDia" class="card-link">
+          <div class="card-menu-home">
+            <h4>Promoções</h4>
+            <p>Veja ofertas disponíveis.</p>
+          </div>
+        </a>
+      </div>
+
+    <% } %>
+
+    <!-- 👨‍🍳 FUNCIONÁRIO / ADMIN -->
+    <% if (role === "funcionario" || role === "admin") { %>
+
+      <div class="col-md-4 mb-4">
+        <a href="/admin/listarClientes" class="card-link">
+          <div class="card-menu-home">
+            <h4>Clientes</h4>
+            <p>Consultar dados dos clientes.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/admin/listarFuncionarios" class="card-link">
+          <div class="card-menu-home">
+            <h4>Funcionários</h4>
+            <p>Gerenciar equipe cadastrada.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/admin/refeicoes/novo" class="card-link">
+          <div class="card-menu-home">
+            <h4>Cadastrar Refeição</h4>
+            <p>Registrar refeições.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/promocao" class="card-link">
+          <div class="card-menu-home">
+            <h4>Promoções</h4>
+            <p>Cadastrar e editar promoções.</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        <a href="/login/telaRestaurante" class="card-link">
+          <div class="card-menu-home">
+            <h4>Restaurantes</h4>
+            <p>Gerenciar unidades cadastradas.</p>
+          </div>
+        </a>
+      </div>
+
+    <% } %>
+
+  </div>
+
+</div>
+
+</body>
+</html>
