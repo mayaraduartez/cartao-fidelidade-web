@@ -4,53 +4,51 @@ const sequelizeconnect = require("../config/connection");
 const Usuario = sequelizeconnect.define(
   "Usuario",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+      allowNull: false
+    },
     nome: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     sobrenome: {
       type: DataTypes.STRING,
+      allowNull: false
     },
     foto: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
     },
     cpf: {
-        type: DataTypes.STRING,
-        unique: true,
+      type: DataTypes.STRING,
+      allowNull: false
     },
     data_nascimento: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
+      allowNull: false
     },
     telefone: {
-        type: DataTypes.STRING,
-    },
-     rua: {
-  type: DataTypes.STRING,
-},
- bairro: {
-  type: DataTypes.STRING,
-},
-cidade: {
-  type: DataTypes.STRING,
-},
-nro_endereco: {
-  type: DataTypes.STRING,
-},
-UF: {
-  type: DataTypes.STRING,
-},
-  email: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
     },
     senha: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: false
     },
+    GrupoId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    }
   },
   {
-    timestamps: false,
     tableName: "usuarios",
+    timestamps: false
   }
 );
 

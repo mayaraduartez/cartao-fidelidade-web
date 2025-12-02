@@ -2,53 +2,69 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 3000;
-var session = require("express-session");
-var passport = require("passport"); 
+const session = require("express-session");
+const passport = require("passport");
 
-const mainRouter = require("./router/mainRouters");
 
-const Usuario = require("./models/Usuario");
-const Cartao_cliente = require("./models/Cartao_cliente");
-const Promocao = require("./models/Promocao");
-const Restaurante = require("./models/Restaurante");
-const Unid_Restaurante = require("./models/Unid_Restaurante");
-const Permissao = require("./models/Permissao");
-const Grupo = require("./models/Grupo");
-const Token = require("./models/Token");
 
-// Define as relações entre os modelos
+// Importa TODOS os models e conexão automaticamente
+const db = require("./models");
+
+// Models individuais
+const { 
+  Usuario, 
+  Cartao_cliente, 
+  Promocao, 
+  Restaurante, 
+  Unid_Restaurante, 
+  Permissao, 
+  Grupo, 
+  Token 
+} = db;
+
+// =============================
+// ASSOCIAÇÕES ENTRE MODELS
+// =============================
+
+// Token ↔ Usuario
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);
 
+// Grupo ↔ Permissão (N:N)
+Grupo.belongsToMany(Permissao, { through: "grupos_permissao" });
+Permissao.belongsToMany(Grupo, { through: "grupos_permissao" });
 
+// Unid_Restaurante ↔ Promoção (N:N)
+Unid_Restaurante.belongsToMany(Promocao, { through: "promo_unidade" });
+Promocao.belongsToMany(Unid_Restaurante, { through: "promo_unidade" });
 
-
-
-Grupo.belongsToMany(Permissao, { through: 'grupos_permissao' });
-Permissao.belongsToMany(Grupo, { through: 'grupos_permissao' });
-
-Unid_Restaurante.belongsToMany(Promocao, { through: 'promo_unidade' });
-Promocao.belongsToMany(Unid_Restaurante, { through: 'promo_unidade' });
-
+// Cartão do cliente ↔ Usuario
 Cartao_cliente.belongsTo(Usuario);
 Usuario.hasMany(Cartao_cliente);
 
+// Unidade ↔ Restaurante (1:N)
 Unid_Restaurante.belongsTo(Restaurante);
 Restaurante.hasMany(Unid_Restaurante);
 
+// Cartão ↔ Promoção
 Cartao_cliente.belongsTo(Promocao);
 Promocao.hasMany(Cartao_cliente);
 
+// Usuario ↔ Grupo
+Usuario.belongsTo(Grupo, { foreignKey: "GrupoId" });
+Grupo.hasMany(Usuario, { foreignKey: "GrupoId" });
+
+// =============================
+// Middleware Express
+// =============================
 app.use(express.json());
-
-//configuração dos arquivos de visão (VIEWS)
-app.set("view engine", "ejs");
-
-//configurar para receber dados por metodo post
 app.use(express.urlencoded({ extended: false }));
-
-//pasta de arquivos estáticos
 app.use(express.static(path.join(__dirname, "public")));
+
+
+// CONFIGURAR EJS AQUI!!!
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 
 app.use(
   session({
@@ -58,14 +74,22 @@ app.use(
   })
 );
 
-//usuário e grupo
-Usuario.belongsTo(Grupo, { foreignKey: 'GrupoId' });
-Grupo.hasMany(Usuario, { foreignKey: 'GrupoId' });
-
 app.use(passport.authenticate("session"));
 
+// Rotas
+const mainRouter = require("./router/mainRouters");
 app.use("/", mainRouter);
 
-app.listen(port, function () {
+// =============================
+// TESTE DE CONEXÃO
+// =============================
+db.sequelize.authenticate()
+  .then(() => console.log("🔥 Conectado ao PostgreSQL via config.json!"))
+  .catch(err => console.error("❌ Erro ao conectar no banco:", err));
+
+// =============================
+// Start server
+// =============================
+app.listen(port, () => {
   console.log("Servidor funcionando na porta: " + port);
 });

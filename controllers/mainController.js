@@ -4,7 +4,7 @@ const { Op } = require("sequelize");
 const Sequelize = require('sequelize'); //r
 
 const Usuario = require("../models/Usuario");
-//const Restaurante = require("../models/Restaurante");
+const Restaurante = require("../models/Restaurante");
 const Refeicao = require("../models/refeicoes");
 const Premio = require("../models/Premio");
 const Promocao = require("../models/Promocao");
@@ -183,12 +183,13 @@ async function excluirRestaurante(req, res) {
     if (!restaurante) return res.status(404).send("Restaurante não encontrado");
 
     await restaurante.destroy();
-    res.redirect("/login/telaRestaurante"); // ✅ corrigido
+    res.redirect("/login/telaRestaurante");
   } catch (error) {
     console.error("Erro ao excluir restaurante:", error);
     res.status(500).send("Erro ao excluir restaurante");
   }
 }
+
 
 
 // -----------------------------
@@ -297,22 +298,23 @@ async function atualizarPerfil(req, res) {
   }
 }
 
-async function listarClientes(req, res) {
+const listarClientes = async (req, res) => {
   try {
     const clientes = await Usuario.findAll({
-  where: {
-    [Op.or]: [
-      { GrupoId: null },       
-      { GrupoId: '' }         
-    ]
-  }
-});
+      where: {
+        GrupoId: null
+      }
+    });
+
     res.render("admin/listarClientes", { clientes });
+
   } catch (error) {
     console.error("Erro ao listar clientes:", error);
-    res.status(500).send("Erro ao carregar lista de clientes.");
+    res.status(500).send("Erro ao listar clientes");
   }
-}
+};
+
+
 
 
 // -----------------------------
