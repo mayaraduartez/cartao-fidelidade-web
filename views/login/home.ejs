@@ -7,7 +7,6 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style4.css">
-
 </head>
 <body>
 
@@ -17,9 +16,7 @@
 
     <!-- LOGO -->
     <a class="navbar-brand" href="/home">
-      <!-- Troque a imagem abaixo pela sua logo -->
       <img src="/images/logoRes.png" alt="Logo do Sistema">
-      
     </a>
 
     <span class="nav-text">Cartão Fidelidade</span>
@@ -30,29 +27,22 @@
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="navbarSite">
-
       <ul class="navbar-nav">
-
         <!-- PERFIL DO USUÁRIO -->
         <li class="nav-item mr-3">
           <span class="nav-text"><%= username %></span>
         </li>
-
         <!-- BOTÃO LOGOUT -->
         <li class="nav-item">
-          <a href="/logout" class="btn btn-logout">Sair</a>
+          <a href="/login" class="btn btn-logout">Sair</a>
         </li>
-
       </ul>
-
     </div>
   </div>
 </nav>
 
-
 <!-- ⭐ CONTEÚDO PRINCIPAL -->
 <div class="home-container">
-
   <h1 class="titulo-home">Bem-vindo ao Restaurante Sabor Caseiro!</h1>
   <p class="subtitulo-home">
      <strong><%= role.toUpperCase() %></strong>
@@ -60,9 +50,8 @@
 
   <div class="row">
 
-    <!-- ⭐ CLIENTE -->
+    <!-- ⭐ CLIENTE (usuário sem grupo) -->
     <% if (role === "cliente") { %>
-
       <div class="col-md-4 mb-4">
         <a href="/minhasRefeicoes?user=<%= username %>" class="card-link">
           <div class="card-menu-home">
@@ -89,12 +78,32 @@
           </div>
         </a>
       </div>
-
     <% } %>
 
-    <!-- 👨‍🍳 FUNCIONÁRIO / ADMIN -->
-    <% if (role === "funcionario" || role === "admin") { %>
+    <!-- 👨‍💼 CAIXA / MOTOBOY -->
+    <% if (role === "caixa" || role === "motoboy") { %>
+      <div class="col-md-4 mb-4">
+        <a href="/admin/refeicoes/novo" class="card-link">
+          <div class="card-menu-home">
+            <h4>Registrar Comanda</h4>
+            <p>Cadastrar refeições dos clientes.</p>
+          </div>
+          
+        </a>
+      </div>
+    
+    <div class="col-md-4 mb-4">
+        <a href="/promoDoDia" class="card-link">
+          <div class="card-menu-home">
+            <h4>Promoções</h4>
+            <p>Veja ofertas disponíveis.</p>
+          </div>
+        </a>
+      </div>
+    <% } %>
 
+    <!-- 🛠️ ADMINISTRADOR -->
+    <% if (role === "admin") { %>
       <div class="col-md-4 mb-4">
         <a href="/admin/listarClientes" class="card-link">
           <div class="card-menu-home">
@@ -140,10 +149,26 @@
         </a>
       </div>
 
+      <div class="col-md-4 mb-4">
+        <a href="/admin/listarGrupos" class="card-link">
+          <div class="card-menu-home">
+            <h4>Grupos</h4>
+            <p>Gerenciar permissões e papéis.</p>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-4 mb-4">
+        <a href="/promoDoDia" class="card-link">
+          <div class="card-menu-home">
+            <h4>Promoções</h4>
+            <p>Veja ofertas disponíveis.</p>
+          </div>
+        </a>
+      </div>
+
     <% } %>
 
   </div>
-
 </div>
 
 </body>

@@ -83,10 +83,12 @@
               <td><%= promo.descricao %></td>
               <td>
                 <% if (promo.foto) { %>
-                  <img src="/uploads/<%= promo.foto %>" class="rounded" style="width:50px; height:50px; object-fit:cover;">
-                <% } else { %>
+              <img id="previewFoto" src="<%= promo.foto ? '/images/' + promo.foto : '/images/default.png' %>" class="card-img-top" style="height:50px; object-fit:cover;">
+            <% } else { %>
                   —
-                <% } %>
+              <% } %>
+                
+               
               </td>
               <td><%= promo.qtd_refeicao %></td>
               <td><%= promo.tipo_desconto %></td>
@@ -118,5 +120,23 @@
       </div>
     </div>
   </div>
+   
 </body>
+<!-- Script para preview da foto -->
+  <script>
+    // Mostra a prévia da foto antes do envio
+    const fotoInput = document.getElementById("foto");
+    const preview = document.getElementById("previewFoto");
+
+    fotoInput.addEventListener("change", function() {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
 </html>

@@ -10,6 +10,22 @@ html, body {
   font-family: 'Poppins-Regular', sans-serif;
 }
 
+/*tela listarRefeicaoCliente*/
+
+
+/* Mensagem customizada de nenhum prêmio */
+.msg-erro-custom {
+  background-color: #ffecc7;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  display: inline-block;
+  margin-top: 15px;
+  text-align: center;
+}
+
+
 /* Tela com fundo gradiente */
 .tela-funcionarios {
   min-height: 100vh;
@@ -185,6 +201,7 @@ html, body {
 .table td:nth-child(3),
 .table td:nth-child(7) {
   text-align: left;
+   text-align: center;
 }
 
 .table tbody tr:last-child td:first-child {

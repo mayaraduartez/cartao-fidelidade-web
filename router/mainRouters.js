@@ -49,7 +49,7 @@ router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
 // Rotas de perfil
 router.get('/meuPerfil', mainController.MeuPerfil);
 router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
-//router.get("/recuperarSenha", loginController.recuperarSenhaForm);
+
 
 // Rota administrativa
 router.get("/admin/listarClientes", mainController.listarClientes);
@@ -66,6 +66,9 @@ router.get("/minhasRefeicoes", mainController.minhasRefeicoes);
 router.get('/premio', mainController.verificarPremio);
 router.post('/conceder-premio', mainController.concederPremio);
 router.post('/utilizar-premio/:id', mainController.utilizarPremio);
+
+//✅ nova rota listar refeição do cliente
+router.get('/listarRefeicoesCliente', mainController.listarRefeicoesCliente);
 
 // Cadastro de promoção (admin)
 router.get("/promocao", mainController.FormPromocao);
