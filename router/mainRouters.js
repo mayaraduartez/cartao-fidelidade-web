@@ -5,21 +5,28 @@ const autenticacao = require("../config/autenticacao");
 const upload = require("../config/upload");
 const mainController = require("../controllers/mainController");
 
+
+
 //rota pagina inicial
 router.get("/home", mainController.home);
 //rota promoção do dia
 router.get("/promoDoDia", mainController.telaPromocaoDia);
 
 
-// ✅ Mantida rota correta para exibir tela com listagem e formulário
-router.get("/login/telaRestaurante", mainController.listarRestaurantes);
+
 
 // ✅ Cadastro de restaurante
 router.post("/restaurantes", mainController.cadastrarRestaurante);
+router.get("/restaurantes", mainController.listarRestaurantes);
+
+
+// ✅ Mantida rota correta para exibir tela com listagem e formulário
+router.get("/login/telaRestaurante", mainController.listarRestaurantes);
 
 // ✅ Edição e exclusão
-router.post("/restaurantes/:id/editar", mainController.editarRestaurante);
 router.post("/restaurantes/:id/excluir", mainController.excluirRestaurante);
+router.get("/restaurantes/:id/editar", mainController.formEditarRestaurante);
+router.post("/restaurantes/:id/editar", upload.single('foto'), mainController.editarRestaurante);
 
 // Páginas login
 router.get('/login', loginController.abrelogin);
@@ -49,11 +56,10 @@ router.get("/admin/funcionarios/buscar", mainController.buscarFuncionario);
 // Rotas de perfil
 router.get('/meuPerfil', mainController.MeuPerfil);
 router.post('/atualizarPerfil', upload.single('foto'), mainController.atualizarPerfil);
-//router.get("/recuperarSenha", loginController.recuperarSenhaForm);
+
 
 // Rota administrativa
 router.get("/admin/listarClientes", mainController.listarClientes);
-
 
 // Cadastro de refeição (admin)
 router.get("/admin/refeicoes/novo", mainController.cadastrarRefeicao);
@@ -66,6 +72,9 @@ router.get("/minhasRefeicoes", mainController.minhasRefeicoes);
 router.get('/premio', mainController.verificarPremio);
 router.post('/conceder-premio', mainController.concederPremio);
 router.post('/utilizar-premio/:id', mainController.utilizarPremio);
+
+//✅ nova rota listar refeição do cliente
+router.get('/listarRefeicoesCliente', mainController.listarRefeicoesCliente);
 
 // Cadastro de promoção (admin)
 router.get("/promocao", mainController.FormPromocao);
@@ -102,6 +111,16 @@ router.post("/admin/grupos/excluir/:id", mainController.excluirGrupo);
 
 router.get("/admin/grupos/editar/:id", mainController.telaEditarGrupo);
 router.post("/admin/grupos/editar/:id", mainController.editarGrupo);
+
+
+// usuários gerais
+//router.post("/cadastrar-usuario", upload.single("foto"), loginController.cadastro);
+//router.get("/cadastrar", (req, res) => res.render("login/cadastro")); // recomendo renomear depois
+
+router.get("/cadastrar_restaurante", mainController.mostrarCadastroRestaurante);
+router.post("/restaurantes", upload.single('foto'), mainController.cadastrarRestauranteCompleto);
+
+
 
 
 module.exports = router;

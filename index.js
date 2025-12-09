@@ -16,6 +16,11 @@ const Permissao = require("./models/Permissao");
 const Grupo = require("./models/Grupo");
 const Token = require("./models/Token");
 
+
+
+
+
+
 // Define as relações entre os modelos
 Token.belongsTo(Usuario);
 Usuario.hasMany(Token);

@@ -15,7 +15,7 @@ const Restaurante = sequelizeconnect.define(
   },
   {
     timestamps: false,
-    tableName: "restaurante",
+    tableName: "restaurantse",
   }
 );
 

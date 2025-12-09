@@ -13,27 +13,33 @@
   <link rel="stylesheet" href="/css/style3.css" />
 </head>
 <body>
-  <div class="container mt-4">
-
-    <div class="text-left mb-4">
-      <img src="/images/logoRes.png" alt="Logo Sabor Caseiro" style="width: 120px;">
+  <div class="tela-funcionarios">
+    <div class="cabecalho-funcionarios">
+      <div class="logo-area">
+        <img src="/images/logoRes.png" alt="Logo Sabor Caseiro">
+      </div>
+      <h1 class="titulo-funcionarios">Criar Promoção</h1>
     </div>
 
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h2 class="mb-4 text-center">Criar Promoção</h2>
+    <div class="box-formulario">
+
 
         <form action="/cadastrarPromocao" method="post" enctype="multipart/form-data">
           
           <div class="row">
             <!-- Coluna da foto -->
             <div class="col-md-4 text-center mb-4">
-              <img id="previewFoto"
-                   src="/img/default.png"
-                   alt="Foto da promoção"
-                   style="width:150px;height:150px;border-radius:10px;object-fit:cover;margin-bottom:10px;">
+              
+                <img id="previewFoto"
+                     src="/img/default.png"
+                     alt="Foto da promoção"
+                     style="width:150px;height:150px;border-radius:10px;object-fit:cover;margin-bottom:10px;">
+             
 
               <input type="file" id="foto" name="foto" accept="image/*" class="form-control-file mb-3">
+              <small class="form-text text-muted">
+                
+              </small>
             </div>
 
             <!-- Coluna das informações -->
@@ -85,22 +91,21 @@
     </div>
   </div>
 
-  <!-- Script para preview da foto -->
-  <script>
-    // Mostra a prévia da foto antes do envio
-    const fotoInput = document.getElementById("foto");
-    const preview = document.getElementById("previewFoto");
-
-    fotoInput.addEventListener("change", function() {
-      const file = this.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          preview.src = e.target.result;
-        }
-        reader.readAsDataURL(file);
-      }
-    });
-  </script>
 </body>
+<script>
+  const fotoInput = document.getElementById("foto");
+  const preview = document.getElementById("previewFoto");
+
+  fotoInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+
 </html>
