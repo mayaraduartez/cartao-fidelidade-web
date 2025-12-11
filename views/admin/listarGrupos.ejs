@@ -30,6 +30,15 @@
             value="<%= typeof nome !== 'undefined' ? nome : '' %>"
           />
 
+          <!-- Novo campo para busca por ID -->
+          <input
+            type="number"
+            name="id"
+            class="input100"
+            placeholder="Digite o ID do grupo"
+            value="<%= typeof id !== 'undefined' ? id : '' %>"
+          />
+
           <div class="btn-group-form">
             <button type="submit" class="login100-form-btn">
               <i class="fa fa-search"></i> Buscar
@@ -51,12 +60,13 @@
       <!-- Tabela de grupos -->
       <div class="box-tabela">
         <!-- Mensagem de sucesso ou erro -->
-        <% if (typeof msg !== 'undefined' && msg) { %> <% if (msgType ===
-        'success') { %>
-        <div class="msg-sucesso"><%= msg %></div>
-        <% } else { %>
-        <div class="msg-erro"><%= msg %></div>
-        <% } %> <% } %>
+        <% if (typeof msg !== 'undefined' && msg) { %>
+          <% if (msgType === 'success') { %>
+            <div class="msg-sucesso"><%= msg %></div>
+          <% } else { %>
+            <div class="msg-erro"><%= msg %></div>
+          <% } %>
+        <% } %>
 
         <table class="table table-striped table-bordered">
           <thead class="thead-dark">
@@ -77,8 +87,7 @@
                 <a
                   href="/admin/grupos/editar/<%= grupo.id %>"
                   class="btn-acao btn-editar"
-                  >Editar</a
-                >
+                >Editar</a>
                 <form
                   action="/admin/grupos/excluir/<%= grupo.id %>"
                   method="POST"
@@ -98,7 +107,7 @@
           </tbody>
         </table>
         <div class="text-center p-t-12">
-          <a class="btn-voltar" href="/meuPerfil"> Voltar </a>
+          <a class="btn-voltar" href="/home"> Voltar </a>
         </div>
       </div>
     </div>

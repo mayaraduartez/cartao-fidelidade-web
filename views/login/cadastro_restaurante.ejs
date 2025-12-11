@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Restaurante</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/style/style2.css"> <!-- Usando mesmo CSS do login -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Playfair+Display&display=swap" rel="stylesheet">
+
+  <style>
+    body.fundo-degrade {
+      font-family: 'Open Sans', sans-serif;
+      background: linear-gradient(-135deg, #ffe016, #f94904);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 40px;
+    }
+
+    .container-card {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .container-card h1 {
+      font-family: 'Playfair Display', serif;
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .container-card p {
+      color: #555;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-group label {
+      font-weight: bold;
+    }
+
+    input[type="text"], input[type="tel"], input[type="url"], input[type="email"],
+    input[type="time"], input[type="number"], select, textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background-color: #2563eb;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 12px 18px;
+    }
+
+    .btn-secondary {
+      background-color: #eaeefc;
+      color: #2563eb;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 12px 18px;
+    }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .status.error { color: #dc2626; }
+    .status.success { color: #16a34a; }
+
+    .imgbox {
+      width: 80px; height: 80px;
+      border: 1px dashed #ccc;
+      border-radius: 10px;
+      display: grid; place-items: center;
+      background: #fafafa;
+      overflow: hidden;
+      margin-right: 10px;
+    }
+
+    .imgbox img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .preview {
+      display: flex; align-items: center; margin-bottom: 15px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="fundo-degrade">
+
+  <div class="container-card">
+    <h1>Cadastro de Restaurante</h1>
+          <img src="../images/logoRes.png" alt="Logo Sabor Caseiro" style="width: 100px; height: auto;">
+
+    <p>Preencha os campos abaixo para cadastrar seu restaurante.</p>
+
+     <form id="form-restaurante" method="post" action="/restaurantes" enctype="multipart/form-data">
+
+
+      <!-- Identificação -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label for="nome">Nome do restaurante <span class="text-danger">*</span></label>
+          <input type="text" id="nome" name="nome" placeholder="Ex: Dona Maria Bistrô" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria">Categoria/Culinária <span class="text-danger">*</span></label>
+          <select id="categoria" name="categoria" required>
+            <option value="">Selecione...</option>
+            <option>Brasileira</option>
+            <option>Italiana</option>
+            <option>Japonesa</option>
+            <option>Hamburgueria</option>
+            <option>Padaria</option>
+            <option>Vegetariana/Vegana</option>
+            <option>Churrascaria</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Contato -->
+      <div class="grid-3">
+        <div class="form-group">
+          <label for="telefone">Telefone/WhatsApp <span class="text-danger">*</span></label>
+          <input type="tel" id="telefone" name="telefone" placeholder="(xx) xxxxx-xxxx" required/>
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="contato@seudominio.com"/>
+        </div>
+
+        <div class="form-group">
+          <label for="site">Site ou rede social</label>
+          <input type="url" id="site" name="site" placeholder="https://instagram.com/seuuser"/>
+        </div>
+      </div>
+
+      <!-- Endereço -->
+      <div class="grid-3">
+        <div class="form-group">
+          <label for="endereco">Endereço <span class="text-danger">*</span></label>
+          <input type="text" id="endereco" name="endereco" placeholder="Rua Exemplo, 123" required/>
+        </div>
+        <div class="form-group">
+          <label for="cidade">Cidade <span class="text-danger">*</span></label>
+          <input type="text" id="cidade" name="cidade" placeholder="Bagé" required/>
+        </div>
+        <div class="form-group">
+          <label for="estado">Estado <span class="text-danger">*</span></label>
+          <select id="estado" name="estado" required>
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SE</option><option>SP</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Funcionamento -->
+      <div class="grid-3">
+        <div class="form-group">
+          <label for="abre">Horário de abertura <span class="text-danger">*</span></label>
+          <input type="time" id="abre" name="abre" required/>
+        </div>
+        <div class="form-group">
+          <label for="fecha">Horário de fechamento <span class="text-danger">*</span></label>
+          <input type="time" id="fecha" name="fecha" required/>
+        </div>
+        <div class="form-group">
+          <label for="preco">Preço médio por pessoa (R$)</label>
+          <input type="number" id="preco" name="preco" min="0" step="1" placeholder="Ex: 60"/>
+        </div>
+      </div>
+
+      <!-- Serviços e Foto -->
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Serviços</label>
+          <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:10px;">
+            <label><input type="checkbox" name="servicos" value="Delivery"> Delivery</label>
+            <label><input type="checkbox" name="servicos" value="Retirada"> Retirada</label>
+            <label><input type="checkbox" name="servicos" value="Reservas"> Reservas</label>
+            <label><input type="checkbox" name="servicos" value="Wi-Fi"> Wi‑Fi</label>
+            <label><input type="checkbox" name="servicos" value="Acessível"> Acessível</label>
+            <label><input type="checkbox" name="servicos" value="Pet friendly"> Pet friendly</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="foto">Foto de capa</label>
+          <input type="file" id="foto" name="foto" accept="image/*"/>
+          <div class="preview">
+            <div class="imgbox" id="imgbox">Prévia</div>
+            <span>Formato JPG/PNG, até 5MB.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="form-group">
+        <label for="descricao">Descrição</label>
+        <textarea id="descricao" name="descricao" placeholder="Conte o que torna seu restaurante especial..."></textarea>
+      </div>
+
+      <!-- Ações -->
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <button type="reset" class="btn btn-secondary">Limpar</button>
+      </div>
+      <div id="status" class="status" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+  <script>
+    const form = document.getElementById('form-restaurante');
+    const statusEl = document.getElementById('status');
+    const fotoInput = document.getElementById('foto');
+    const imgbox = document.getElementById('imgbox');
+
+    // Pré-visualização da imagem
+    fotoInput.addEventListener('change', () => {
+      const file = fotoInput.files?.[0];
+      if (!file) { imgbox.textContent='Prévia'; imgbox.innerHTML=''; return; }
+      if (file.size > 5*1024*1024) {
+        statusEl.textContent='A imagem excede 5MB.';
+        statusEl.className='status error';
+        fotoInput.value=''; imgbox.textContent='Prévia'; imgbox.innerHTML=''; return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => { imgbox.innerHTML=`<img src="${e.target.result}" alt="Prévia da foto"/>`; };
+      reader.readAsDataURL(file);
+    });
+
+    // Envio do formulário via fetch
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      statusEl.textContent=''; statusEl.className='status';
+      const data = new FormData(form);
+
+      const obrigatorios=['nome','categoria','telefone','endereco','cidade','estado','abre','fecha'];
+      const faltando=obrigatorios.filter(c=>!String(data.get(c)||'').trim());
+      if(faltando.length){ statusEl.textContent='Preencha todos os campos obrigatórios.'; statusEl.className='status error'; return; }
+
+      try{
+        const response=await fetch('/restaurantes',{method:'POST',body:data});
+        const result=await response.json();
+        if(result.sucesso){
+          statusEl.textContent='Cadastro realizado com sucesso!';
+          statusEl.className='status success';
+          form.reset();
+          imgbox.textContent='Prévia'; imgbox.innerHTML='';
+        }else{
+          statusEl.textContent=result.erro||'Erro ao cadastrar.';
+          statusEl.className='status error';
+        }
+      }catch(err){
+        console.error(err);
+        statusEl.textContent='Erro ao enviar formulário.';
+        statusEl.className='status error';
+      }
+    });
+  </script>
+
+</body>
+</html>

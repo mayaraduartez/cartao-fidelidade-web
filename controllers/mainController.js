@@ -1,7 +1,7 @@
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { Op } = require("sequelize");
-const Sequelize = require('sequelize'); //r
+const Sequelize = require('sequelize'); 
 
 const Usuario = require("../models/Usuario");
 //const Restaurante = require("../models/Restaurante");
@@ -11,12 +11,18 @@ const Promocao = require("../models/Promocao");
 //const Funcionario = require("../models/Funcionario"); 
 const upload = require("../config/upload")
 const Grupo = require('../models/Grupo');
+const fs = require("fs"); //linha adicionada RR
+// mainController.js
+const Restaurante = require("../models/Restaurante");
+
+
 
 
 
 // ------------------------
 // 🧩 FUNÇÕES DE VALIDAÇÃO
 // ------------------------
+
 
 function validarCPF(cpf) {
   cpf = cpf.replace(/[^\d]+/g, "");
@@ -35,23 +41,32 @@ function validarCPF(cpf) {
   return resto === parseInt(cpf.charAt(10));
 }
 
-//tela home 
-
+//tela home com permissões RR
 async function home(req, res) {
   try {
     if (!req.user || !req.user.id) {
       return res.redirect("/login");
     }
 
-    const usuario = await Usuario.findByPk(req.user.id);
+    // Busca usuário junto com seu grupo
+    const usuario = await Usuario.findByPk(req.user.id, {
+      include: [{ model: Grupo, as: "Grupo" }]
+    });
 
     if (!usuario) {
       return res.status(404).send("Usuário não encontrado");
     }
 
+    // Define role: se não tiver grupo → cliente
+    let role = "cliente";
+    if (usuario.Grupo && usuario.Grupo.nome) {
+      role = usuario.Grupo.nome.toLowerCase().trim();
+    }
+
+    // Renderiza a view home.ejs com username e role
     res.render("login/home", {
       username: usuario.email || usuario.cpf,
-      role: usuario.cargo || "cliente",
+      role,
       user: usuario
     });
 
@@ -62,27 +77,28 @@ async function home(req, res) {
 }
 
 
-//Tela promoção do dia
+
+//Tela promoção do dia RR
 async function telaPromocaoDia(req, res) {
   try {
     if (!req.user || !req.user.id) {
       return res.redirect("/login");
     }
 
-    const usuario = await Usuario.findByPk(req.user.id);
+    // Busca usuário com seu grupo
+    const usuario = await Usuario.findByPk(req.user.id, {
+      include: [{ model: Grupo, as: "Grupo" }]
+    });
 
     if (!usuario) {
       return res.status(404).send("Usuário não encontrado");
     }
 
-    // >>> AJUSTE CRÍTICO <<<
-    // Normaliza cargo para evitar "Cliente", "cliente ", null, etc.
-    const cargo = (usuario.cargo || "cliente").toLowerCase().trim();
+    // Normaliza grupo
+    const grupo = (usuario.Grupo?.nome || "cliente").toLowerCase().trim();
 
-    //Somente cliente pode ver
-    if (cargo !== "cliente") {
-      return res.redirect("/home");
-    }
+    
+    
 
     // Buscar promoções ativas
     const promocoes = await Promocao.findAll({
@@ -94,7 +110,7 @@ async function telaPromocaoDia(req, res) {
 
     res.render("login/promoDoDia", {
       username: usuario.email || usuario.cpf,
-      role: cargo,
+      role: grupo,
       promocoes
     });
 
@@ -103,6 +119,7 @@ async function telaPromocaoDia(req, res) {
     res.status(500).send("Erro ao carregar promoção do dia");
   }
 }
+
 
 
 
@@ -161,8 +178,12 @@ async function cadastrarCliente(req, res) {
 async function listarFuncionarios(req, res) {
   try {
     const funcionarios = await Usuario.findAll({
-      include: [{ model: Grupo }]
+      where: {
+        GrupoId: { [Op.ne]: null } // apenas quem tem grupo
+      },
+      include: [{ model: Grupo, as: "Grupo" }]
     });
+
     res.render("admin/listarFuncionarios", { funcionarios });
   } catch (error) {
     console.error("Erro ao listar funcionários:", error);
@@ -326,6 +347,66 @@ const editarFuncionario = async (req, res) => {
   }
 };
 
+// ---------------------------------------
+// CADASTRAR RESTAURANTE COMPLETO
+// ---------------------------------------
+async function cadastrarRestauranteCompleto(req, res) {
+  try {
+    const {
+      nome,
+      categoria,
+      telefone,
+      email,
+      site,
+      endereco,
+      cidade,
+      estado,
+      abre,
+      fecha,
+      preco,
+      descricao,
+    } = req.body;
+
+    const servicos = req.body.servicos || [];
+
+    let fotoPath = null;
+    if (req.file) fotoPath = `/uploads/${req.file.filename}`;
+
+    if (!nome || !categoria || !telefone || !endereco || !cidade || !estado || !abre || !fecha) {
+      return res.status(400).send("Preencha todos os campos obrigatórios.");
+    }
+
+    if (abre >= fecha) {
+      return res.status(400).send("Horário de fechamento deve ser após abertura.");
+    }
+
+    const novoRestaurante = await Restaurante.create({
+      nome,
+      categoria,
+      telefone,
+      email,
+      site,
+      endereco,
+      cidade,
+      estado,
+      horarioAbertura: abre,
+      horarioFechamento: fecha,
+      precoMedio: preco ? Number(preco) : null,
+      servicos: Array.isArray(servicos) ? servicos.join(",") : servicos,
+      descricao,
+      foto: fotoPath,
+    });
+
+    res.json({ sucesso: true, restaurante: novoRestaurante });
+  } catch (err) {
+    console.error("Erro ao cadastrar restaurante:", err);
+    res.status(500).json({ sucesso: false, erro: err.message });
+  }
+}
+
+function mostrarCadastroRestaurante(req, res) {
+  res.render("login/cadastro_restaurante");
+}
 
 // -----------------------------
 // 🍽️ RESTAURANTES
@@ -456,7 +537,9 @@ async function atualizarPerfil(req, res) {
       cidade, 
       nro_endereco, 
       UF, 
-      cargo 
+      cargo,
+      senha
+      
     } = req.body;
 
      // **CORREÇÃO: Garantir que nro_endereco seja string**
@@ -474,10 +557,14 @@ async function atualizarPerfil(req, res) {
       cidade,
       nro_endereco: numeroEndereco,
       UF,
-      cargo
+      cargo,
+      senha
     };
 
-    
+    // Atualiza a senha somente se preenchida RR
+if (senha && senha.trim() !== '') {
+  dadosAtualizacao.senha = await bcrypt.hash(senha, 10);
+}
 
     // Se uma nova imagem foi enviada, salva o nome do arquivo
     if (req.file) {
@@ -497,45 +584,33 @@ async function atualizarPerfil(req, res) {
   }
 }
 
-// FUNÇÃO: MOSTRAR TELA DE RECUPERAR SENHA
-async function recuperarSenhaForm(req, res) {
-  try {
-    res.render("login/recuperarSenha.ejs", {
-      titulo: "Recuperar Senha",
-      mensagem: "Digite seu e-mail para recuperar sua senha."
-    });
-  } catch (error) {
-    console.error("Erro ao abrir tela de recuperar senha:", error);
-    res.status(500).send("Erro ao carregar a tela de recuperação de senha.");
-  }
-}
+
   
 
 
 async function listarClientes(req, res) {
   try {
+    // Busca todos os usuários que não têm grupo (clientes)
     const clientes = await Usuario.findAll({
-  where: {
-    [Op.or]: [
-      { GrupoId: null },       
-      { GrupoId: '' }         
-    ]
-  }
-});
+      where: { GrupoId: null }, // apenas NULL, nunca ''
+      include: [{ model: Grupo, as: "Grupo" }] // inclui grupo caso necessário
+    });
+
+    // Renderiza a view com os clientes
     res.render("admin/listarClientes", { clientes });
+
   } catch (error) {
     console.error("Erro ao listar clientes:", error);
-    res.status(500).send("Erro ao carregar lista de clientes.");
+    res.status(500).send("Erro ao listar clientes");
   }
 }
-
 
 // -----------------------------
 // ⚙️ OUTRAS FUNÇÕES
 // -----------------------------
 
 // ========================
-// 📌 RENDERIZA A TELA INICIAL
+// 📌 RENDERIZA A TELA Pricipal a Nossa Comanda
 // ========================
 async function cadastrarRefeicao(req, res) {
   res.render("login/principal");
@@ -564,12 +639,63 @@ async function refeicoes(req, res) {
     // Verifica se deve conceder prêmio
     await checarOuConcederPremio(cpf_email);
 
-    res.redirect(`/minhasRefeicoes?user=${encodeURIComponent(cpf_email)}`);
+    //rota listar refeições clientes RR
+     res.send(`
+      <script>
+        alert("Comanda registrada com sucesso!");
+        window.location.href = "/listarRefeicoesCliente?user=${encodeURIComponent(cpf_email)}";
+      </script>
+    `);
   } catch (error) {
     console.error("Erro ao salvar refeição:", error);
     res.status(500).send("Erro ao registrar refeição");
   }
 }
+// ========================
+// 📌 LISTAR REFEIÇÕES DO Cliente RR
+// ========================
+async function listarRefeicoesCliente(req, res) {
+  try {
+    const username = req.query.user;
+    if (!username) return res.status(400).send("Usuário não especificado");
+
+    // Busca todas as refeições do cliente
+    const refeicoes = await Refeicao.findAll({
+      where: {
+        [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+      },
+      order: [["created_at", "DESC"]],
+    });
+
+    // Busca prêmio não utilizado
+    const premio = await Premio.findOne({
+      where: {
+        [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+        utilizado: false,
+      },
+    });
+
+    // Busca dados do cliente (nome, cpf, email)
+    const cliente = await Usuario.findOne({
+      where: {
+        [Sequelize.Op.or]: [{ cpf: username }, { email: username }],
+      },
+    });
+
+    // Renderiza a nova tela
+    res.render("login/listarRefeicaoCliente", {
+      username,
+      refeicoes,
+      totalRefeicoes: refeicoes.length,
+      premio,
+      cliente
+    });
+  } catch (error) {
+    console.error("Erro ao buscar refeições do cliente:", error);
+    res.status(500).send("Erro ao carregar refeições do cliente");
+  }
+}
+
 
 // ========================
 // 📌 LISTAR REFEIÇÕES DO USUÁRIO
@@ -615,6 +741,8 @@ async function verificarPremio(req, res) {
     const username = req.query.user;
     const role = req.session.role || "cliente"; // 👈 PEGAR DA SESSÃO se for cliente não ve o botão utilizar premio
     if (!username) return res.status(400).send("Usuário não especificado");
+
+   
 
     const infoPremio = await obterInfoPremio(username);
 
@@ -678,7 +806,7 @@ async function utilizarPremio(req, res) {
     );
 
     res.redirect(
-      `/minhasRefeicoes?user=${encodeURIComponent(username)}&msg=Prêmio utilizado! Ciclo reiniciado.`
+      `/admin/refeicoes/novo?user=${encodeURIComponent(username)}&msg=Prêmio utilizado! Ciclo reiniciado.`
     );
   } catch (error) {
     console.error("Erro ao utilizar prêmio:", error);
@@ -886,7 +1014,6 @@ async function telaEditarPromocao(req, res) {
 
 
 
-// atualizar promoção
 async function atualizarPromocao(req, res) {
   try {
     const { id } = req.body;
@@ -940,6 +1067,7 @@ async function atualizarPromocao(req, res) {
 
 
 
+
 //excluir
 
 async function excluirPromocao(req, res) {
@@ -955,7 +1083,8 @@ async function excluirPromocao(req, res) {
       return res.status(404).send("Promoção não encontrada");
     }
 
-    // Remove imagem se existir
+    
+    // Remove imagem se existir função ygor
     if (promocao.foto) {
       const fotoPath = path.join(__dirname, "../public/uploads", promocao.foto);
       if (fs.existsSync(fotoPath)) {
@@ -1231,6 +1360,27 @@ async function editarGrupo(req, res) {
   }
 }
 
+//Editar Restaurante
+
+async function formEditarRestaurante(req, res) {
+  try {
+    const restaurante = await Restaurante.findByPk(req.params.id);
+
+    if (!restaurante) return res.status(404).send("Restaurante não encontrado");
+
+    res.render("login/editarRestaurante", { restaurante });
+  } catch (error) {
+    console.error("Erro ao editar restaurante:", error);
+    res.status(500).send("Erro ao carregar página de edição");
+  }
+}
+
+
+
+
+
+
+
 
 // -----------------------------
 // 🚀 EXPORTA TUDO
@@ -1260,9 +1410,12 @@ module.exports = {
   // perfis e refeições
   MeuPerfil,
   atualizarPerfil,
+
+  //refições
   cadastrarRefeicao,
   refeicoes,
   minhasRefeicoes,
+  listarRefeicoesCliente,
   listarClientes,
   cadastrarCliente,
   tela_cadastra_funcionario,
@@ -1270,7 +1423,7 @@ module.exports = {
   verificarPremio,
   concederPremio,
   utilizarPremio,
-  recuperarSenhaForm,
+  
 
   //promoção
   FormPromocao,
@@ -1289,5 +1442,10 @@ module.exports = {
   buscarGrupo,
   telaEditarGrupo,
   editarGrupo,
+
+  //Restaurante
+  formEditarRestaurante,
+  cadastrarRestauranteCompleto,
+  mostrarCadastroRestaurante,
   
 };

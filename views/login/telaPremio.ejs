@@ -18,15 +18,9 @@
       </p>
     <% } %>
 
-    <% if (role === "funcionario" && premio && !premio.utilizado) { %>
-      <form action="/utilizar-premio/<%= premio.id %>?user=<%= username %>" method="POST" class="mt-4">
-        <button type="submit" class="btn btn-success btn-lg">Utilizar Prêmio</button>
-      </form>
-    <% } %>
-
     <div class="mt-4">
       <a href="/minhasRefeicoes?user=<%= username %>" class="btn btn-primary">
-        Voltar para Minhas Refeições
+        Voltar para o Meu Cartão
       </a>
     </div>
   </div>
